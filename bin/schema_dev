@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require 'active_support/core_ext/hash'
+require 'thor'
+require 'schema_dev/config'
+require 'schema_dev/runner'
+
+$config = SchemaDev::Config.load
+$runner = SchemaDev::Runner.new($config)
+
+class CLI < Thor
+
+  def self.matrix_options
+    method_option :dry_run, aliases: "-n", type: :boolean, desc: "Show what the commands would be without running them"
+    method_option :quick, type: :boolean, desc: "Only execute on the 'quick' choice: #{$config.quick.inspect}"
+    method_option :ruby, type: :string, desc: "Only execute for the specified version of ruby"
+    method_option :rails, type: :string, desc: "Only execute for the specified version of rails"
+    method_option :db, type: :string, desc: "Only execute for the specified database" if $config.db?
+  end
+
+  desc "run command", "run a command over the matrix"
+  matrix_options
+  def do(*args)
+    $runner.run(args, **options.symbolize_keys)
+  end
+
+  desc "bundle", "shorthand for '#{$0} do bundle ...'"
+  matrix_options
+  def bundle(*args)
+    $runner.run('bundle', args, **options.symbolize_keys)
+  end
+
+  desc "rake", "shorthand for '#{$0} do rake ...'"
+  matrix_options
+  def rake(*args)
+    $runner.run('rake', args, **options.symbolize_keys)
+  end
+
+  desc "rspec", "shorthand for '#{$0} do rspec ...'"
+  matrix_options
+  def rspec(*args)
+    $runner.run('rspec', args, **options.symbolize_keys)
+  end
+
+end
+
+CLI.start(ARGV)
