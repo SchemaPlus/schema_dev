@@ -2,8 +2,8 @@
 
 require 'active_support/core_ext/hash'
 require 'thor'
-require 'schema_dev/config'
-require 'schema_dev/runner'
+require_relative '../lib/schema_dev/config'
+require_relative '../lib/schema_dev/runner'
 
 $config = SchemaDev::Config.load
 $runner = SchemaDev::Runner.new($config)
