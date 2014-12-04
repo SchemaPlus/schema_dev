@@ -8,11 +8,9 @@ Provides support for working with multiple ruby versions, rails adapaters, and d
 
 ## Installation
 
-Include this as a development dependency in a .gemfile:
+Include this as a development dependency in the client gem's `<ame>.gemfile`:
 
-```ruby
-s.add_development_dependency "schema_dev"
-```
+    s.add_development_dependency "schema_dev"
 
 ## Setup
 
@@ -64,10 +62,7 @@ For PostgreSQL and MySQL the tests need a db user with permissions to create and
 
 For PostgreSQL and MySQL you must explicitly create the databases used by the tests:
 
-        $ rake create_databases  # creates both postgresql & mysql
-           OR
-        $ rake postgresql:create_databases
-        $ rake mysql:create_databases
+        $ rake create_databases  # creates postgresql and/or mysql as needed
 
 ## Running The Tests
 
@@ -75,7 +70,7 @@ In the root directory, you can run, e.g.,
 
     $ schema_dev bundle install
     $ schema_dev rspec
-    
+
 Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--rails` and (if the gem tests multiple dbs) `--db`
 
     $ schema_dev rspec --ruby 2.1.3 --rails 4.0
