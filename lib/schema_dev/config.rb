@@ -11,10 +11,10 @@ module SchemaDev
 
   class Config
 
-    attr_accessor :quick
+    attr_accessor :quick, :db
 
     def self.load
-      new (YAML.load Pathname.new(CONFIG_FILE).read).deep_symbolize_keys
+      @@config ||= new (YAML.load Pathname.new(CONFIG_FILE).read).deep_symbolize_keys
     end
 
     class Tuple < KeyStruct[:ruby, :rails, :db]

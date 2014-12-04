@@ -10,11 +10,10 @@ module SchemaDev
     def initialize(ruby:, rails:, db: nil)
       @ruby_selector = RubySelector.command(ruby)
       @gemfile_selector = GemfileSelector.command(rails: rails, db: db)
-      @dev_env = "SCHEMA_DEV_DB=#{db.inspect}"
     end
 
     def run(cmd, dry_run: false)
-      fullcommand = ["/usr/bin/env", @dev_env, @gemfile_selector, @ruby_selector, cmd].compact.join(' ')
+      fullcommand = ["/usr/bin/env", @gemfile_selector, @ruby_selector, cmd].compact.join(' ')
       puts "* #{fullcommand}"
       return true if dry_run
 
