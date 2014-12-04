@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["ronen@barzel.org"]
   spec.summary       = %q{SchemaPlus development tools}
   spec.description   = %q{SchemaPlus development tools}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/SchemaPlus/schema_dev"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
