@@ -7,10 +7,10 @@ module SchemaDev
     def self.gemfile(opts = {})
       opts = opts.keyword_args(rails: :required, db: nil)
       root = Pathname.new(GEMFILES_DIR)
-      if db
+      if opts.db
         root.join("rails-#{opts.rails}", "Gemfile.#{opts.db}")
       else
-        root.join("Gemfile.#{opts.rails}")
+        root.join("Gemfile.rails-#{opts.rails}")
       end
     end
 
