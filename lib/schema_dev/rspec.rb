@@ -5,10 +5,9 @@ module SchemaDev
   module Rspec
 
     def self.db_connect
-      env = JSON.parse(ENV['SCHEMA_DEV_ENV'])
-      db = env['db']
-      ruby = env['ruby']
-      rails = env['rails']
+      db = ENV['SCHEMA_DEV_DB']
+      ruby = "#{RUBY_ENGINE}-#{RUBY_VERSION}"
+      rails = "rails-#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"
       root = Pathname.new('tmp')
       root.mkpath
       configuration = case db
@@ -44,7 +43,7 @@ module SchemaDev
                         raise "Unknown db adapter #{db.inspect}"
                       end
 
-      ActiveRecord::Base.logger = Logger.new(root.join("ruby-#{ruby}.rails-#{rails}.#{db}.log").open("w"))
+      ActiveRecord::Base.logger = Logger.new(root.join("#{ruby}.#{rails}.#{db}.log").open("w"))
       ActiveRecord::Base.configurations = { 'schema_dev' => configuration }
       ActiveRecord::Base.establish_connection :schema_dev
 

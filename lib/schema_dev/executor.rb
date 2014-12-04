@@ -10,8 +10,7 @@ module SchemaDev
     def initialize(ruby:, rails:, db: nil)
       @ruby_selector = RubySelector.command(ruby)
       @gemfile_selector = GemfileSelector.command(rails: rails, db: db)
-      env = {ruby: ruby, rails: rails, db: db}.reject{|k,val| val.nil?}
-      @dev_env = "SCHEMA_DEV_ENV='#{env.to_json}'"
+      @dev_env = "SCHEMA_DEV_DB=#{db.inspect}"
     end
 
     def run(cmd, dry_run: false)
