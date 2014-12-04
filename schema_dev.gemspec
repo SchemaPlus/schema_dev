@@ -19,10 +19,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "fastandand"
+  spec.add_dependency "hash_keyword_args"
   spec.add_dependency "its-it"
   spec.add_dependency "key_struct"
   spec.add_dependency "thor"
-  spec.add_dependency "fastandand"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
