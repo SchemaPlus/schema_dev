@@ -63,7 +63,7 @@ module SchemaDev
       @matrix ||= begin
                     m = use_ruby.product(use_rails)
                     m = m.product(use_db).map(&:flatten) if db?
-                    m = m.map { |ruby, rails, db| Tuple.new(ruby: ruby, rails: rails, db: db) }
+                    m = m.map { |_ruby, _rails, _db| Tuple.new(ruby: _ruby, rails: _rails, db: _db) }
                     m.reject(&it.match_any?(@exclude)).map(&:to_hash)
                   end
     end
