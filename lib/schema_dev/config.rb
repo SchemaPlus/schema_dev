@@ -17,7 +17,7 @@ module SchemaDev
     def self._reset ; @@config = nil end  # for use by rspec
 
     def self.load
-      @@config ||= new((YAML.load Pathname.new(CONFIG_FILE).read).deep_symbolize_keys)
+      @@config ||= new((YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
     end
 
     class Tuple < KeyStruct[:ruby, :rails, :db]
