@@ -20,26 +20,26 @@ class CLI < Thor
 
   desc "run command", "run a command over the matrix"
   matrix_options
-  def do(*args)
+  def matrix(*args)
     $runner.run(args, **options.symbolize_keys)
   end
 
-  desc "bundle", "shorthand for '#{$0} do bundle ...'"
+  desc "bundle", "shorthand for '#{$0} matrix bundle ...'"
   matrix_options
   def bundle(*args)
     $runner.run('bundle', args, **options.symbolize_keys)
   end
 
-  desc "rake", "shorthand for '#{$0} do rake ...'"
+  desc "rake", "shorthand for '#{$0} matrix bundle exec rake ...'"
   matrix_options
   def rake(*args)
-    $runner.run('rake', args, **options.symbolize_keys)
+    $runner.run('bundle', 'exec', 'rake', args, **options.symbolize_keys)
   end
 
-  desc "rspec", "shorthand for '#{$0} do rspec ...'"
+  desc "rspec", "shorthand for '#{$0} bundle exec rspec ...'"
   matrix_options
   def rspec(*args)
-    $runner.run('rspec', args, **options.symbolize_keys)
+    $runner.run('bundle', 'exec', 'rspec', args, **options.symbolize_keys)
   end
 
 end
