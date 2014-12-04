@@ -4,17 +4,19 @@ module SchemaDev
   GEMFILES_DIR = "gemfiles"
 
   module GemfileSelector
-    def self.gemfile(rails:, db: nil)
+    def self.gemfile(opts = {})
+      opts = opts.keyword_args(rails: :required, db: nil)
       root = Pathname.new(GEMFILES_DIR)
       if db
-        root.join("rails-#{rails}", "Gemfile.#{db}")
+        root.join("rails-#{opts.rails}", "Gemfile.#{opts.db}")
       else
-        root.join("Gemfile.#{rails}")
+        root.join("Gemfile.#{opts.rails}")
       end
     end
 
-    def self.command(rails:, db: nil)
-      "BUNDLE_GEMFILE=#{gemfile(rails: rails, db: db)}"
+    def self.command(opts={})
+      opts = opts.keyword_args(rails: :required, db: nil)
+      "BUNDLE_GEMFILE=#{gemfile(rails: opts.rails, db: opts.db)}"
     end
 
     def self.infer_db
