@@ -11,10 +11,9 @@ module SchemaDev
       Db.configuration
     end
 
-  end
-
-  module Helpers
-    extend Rspec::Db::Helpers
+    module Helpers
+      extend Rspec::Db::Helpers
+    end
   end
 
 end
