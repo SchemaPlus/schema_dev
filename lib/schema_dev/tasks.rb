@@ -1,10 +1,8 @@
 require_relative 'config'
 
-config = SchemaDev::Config.load
+dbms = SchemaDev::Config.load.dbms
 
 DATABASES = %w[schema_plus_test]
-
-dbms = [:postgresql, :mysql].select{|dbm| config.db.grep(/^#{dbm}/).any?}
 
 if dbms.any?
   {

@@ -1,6 +1,7 @@
 require 'shellwords'
 
 require_relative 'matrix_executor'
+require_relative 'travis'
 
 module SchemaDev
   class Runner
@@ -8,7 +9,13 @@ module SchemaDev
       @config = config
     end
 
-    def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil)
+    def travis
+      Travis.update(@config)
+    end
+
+    def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
+      self.travis if freshen
+
       matrix = MatrixExecutor.new @config.matrix(quick: quick, ruby: ruby, rails: rails, db: db)
 
       return true if matrix.run(Shellwords.join(args.flatten), dry_run: dry_run)

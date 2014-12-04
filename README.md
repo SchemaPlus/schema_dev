@@ -4,8 +4,7 @@
 
 Development tools for the SchemaPlus family of gems.
 
-Provides support for working with multiple ruby versions, rails adapaters, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.
-
+Provides support for working with multiple ruby versions, rails adapaters, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.travis.yml` file for [travis-ci](https://travis-ci.org) testing.
 
 ## Installation
 
@@ -91,3 +90,9 @@ For more info, see
 
     $ schema_dev help
     $ schema_dev help rspec   # etc.
+
+## Generating `.travis.yml`
+
+To keep things in sync `.travis.yml` gets automatically updated whenever you run `schema_dev matrix` or any of its shorthands.  There's also a command to just explicitly update `.travis.yml`
+
+    $ schema_dev travis
