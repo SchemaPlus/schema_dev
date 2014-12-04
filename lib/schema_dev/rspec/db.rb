@@ -7,8 +7,8 @@ module SchemaDev
     module Db
       extend self
 
-      def setup(db = nil)
-        @db = db || GemfileSelector.infer_db
+      def setup(_db = nil)
+        @db = _db || GemfileSelector.infer_db
         set_logger
         connect
         RSpec.configure do |config|
@@ -19,7 +19,7 @@ module SchemaDev
           config.filter_run_excluding :mysql => :skip if Helpers.mysql?
           config.filter_run_excluding :sqlite3 => :only unless Helpers.sqlite3?
           config.filter_run_excluding :sqlite3 => :skip if Helpers.sqlite3?
-        end
+        end unless _db
       end
 
       def tmproot
