@@ -1,5 +1,7 @@
 # SchemaDev
 
+[![Gem Version](https://badge.fury.io/rb/schema_dev.png)](http://badge.fury.io/rb/schema_dev)
+
 Development tools for the SchemaPlus family of gems.
 
 Provides support for working with multiple ruby versions, rails adapaters, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.
