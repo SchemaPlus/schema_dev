@@ -37,7 +37,7 @@ module SchemaDev
                       when 'sqlite3'
                         {
                           :adapter => 'sqlite3',
-                          :database => root.join('schema_plus.sqlite3')
+                          :database => root.join('schema_plus.sqlite3').to_s
                         }
                       else
                         raise "Unknown db adapter #{db.inspect}"
