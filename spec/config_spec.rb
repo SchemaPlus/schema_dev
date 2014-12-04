@@ -10,7 +10,7 @@ describe SchemaDev::Config do
     ]
   end
 
-  it "computes matrix without db" do
+  it "computes matrix with db" do
     config = get_config(ruby: %W[1.9.3 2.1.5], rails: %W[4.0 4.1], db: %W[sqlite3 postgresql])
     expect(config.matrix).to match_array [
       { ruby: "1.9.3", rails: "4.0", db: "sqlite3" },
