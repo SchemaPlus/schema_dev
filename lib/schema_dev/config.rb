@@ -14,6 +14,8 @@ module SchemaDev
 
     attr_accessor :quick, :db
 
+    def self._reset ; @@config = nil end  # for use by rspec
+
     def self.load
       @@config ||= new((YAML.load Pathname.new(CONFIG_FILE).read).deep_symbolize_keys)
     end
