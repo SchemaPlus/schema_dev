@@ -1,5 +1,9 @@
-require 'schema_dev/config'
+require 'simplecov'
+SimpleCov.start
+
 require 'tmpdir'
+
+require 'schema_dev/config'
 
 def get_config(data)
   SchemaDev::Config._reset
