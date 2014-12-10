@@ -13,6 +13,10 @@ module SchemaDev
       Travis.update(@config)
     end
 
+    def gemfiles
+      Gemfiles.build(@config)
+    end
+
     def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
       self.travis if freshen
 

@@ -23,6 +23,11 @@ class CLI < Thor
     $runner.travis
   end
 
+  desc "generate gemfiles", "create gemfiles/* hierarchy based on schema_dev.yml values"
+  def gemfiles
+    $runner.gemfiles
+  end
+
   desc "run command", "run a command over the matrix"
   matrix_options
   def matrix(*args)
