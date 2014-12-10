@@ -25,11 +25,20 @@ The client gem needs a file `schema_dev.yml` in it's root, which specifies the t
 
 #### Gemfiles
 
-The client gem must organize its Gemfiles along the lines of:
+The client gem must contain a "gemfiles" directory containing the matrix of
+possible gemfiles; Generate it by running
 
-	gemfiles/rails-4.0/Gemfile.postgresql  # if testing against multiple db adapter
-	
-    gemfiles/Gemfile-rails.4.0             # if hardwired to a single db adapter
+        $ schema_dev gemfiles
+
+This directory should be checked in to the git repo.
+
+`schema_dev gemfiles` only generates gemfiles for the versions of rails &
+db listed in `schema_dev.yml`.  If you change the listed versions you'll
+need to re-generate.
+
+Note that generating the gemfiles blows away any previous files.  If you had made
+local changes for some reason, you'll need to rely on git to recover them.
+
     
 #### Rspec
 
