@@ -15,7 +15,7 @@ module SchemaDev
         rails = tuple[:rails]
         db = tuple[:db]
 
-        label = "ruby #{ruby} - rails #{rails} = db #{db}"
+        label = "ruby #{ruby} - rails #{rails} - db #{db}"
         msg = "#{label} [#{i+1} of #{@matrix.size}]"
         puts "\n\n*** #{msg}\n\n"
 

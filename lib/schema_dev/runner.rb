@@ -2,6 +2,7 @@ require 'shellwords'
 
 require_relative 'matrix_executor'
 require_relative 'travis'
+require_relative 'gemfiles'
 
 module SchemaDev
   class Runner
@@ -10,7 +11,7 @@ module SchemaDev
     end
 
     def travis
-      Travis.update(@config) and puts "* Updated #{filepath}"
+      Travis.update(@config) and puts "* Updated #{Travis::TRAVIS_FILE}"
     end
 
     def gemfiles

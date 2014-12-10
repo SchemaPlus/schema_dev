@@ -1,4 +1,6 @@
 require 'json'
+require 'open3'
+
 require_relative "ruby_selector"
 require_relative "gemfile_selector"
 
@@ -17,10 +19,13 @@ module SchemaDev
       puts "* #{fullcommand}"
       return true if dry_run
 
-      Tempfile.open('SchemaDev') do |file|
-        @error = !system(%Q[ (#{fullcommand}) 2>& 1 | tee #{file.path} ])
-        file.rewind
-        @error ||= file.readlines.grep(/(^Failed examples)|(rake aborted)|(LoadError)/).any?
+      @error = false
+      Open3.popen2e(fullcommand) do |i, oe, t|
+        oe.each {|line|
+          puts line
+          @error ||= (line =~ /(^Failed examples)|(rake aborted)|(LoadError)/)
+        }
+        @error ||= !t.value.success?
       end
 
       return !@error
