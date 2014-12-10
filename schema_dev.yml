@@ -1,6 +1,0 @@
-# this is just here for testing
-ruby:
-    - 1.9.3
-    - 2.1.5
-rails: 4.0
-db: postgresql
