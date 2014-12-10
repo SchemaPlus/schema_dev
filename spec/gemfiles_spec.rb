@@ -1,3 +1,5 @@
+require 'schema_dev/gemfiles'
+
 describe SchemaDev::Gemfiles do
 
   it "copies listed files" do
