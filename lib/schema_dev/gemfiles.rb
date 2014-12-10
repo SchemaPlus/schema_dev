@@ -13,6 +13,8 @@ module SchemaDev
 
       path = Pathname.new("gemfiles")
 
+      _blow_away(path)
+
       _copy(path, 'Gemfile.base')
 
       config.rails.each do |rails|
@@ -33,6 +35,11 @@ module SchemaDev
 
       dstfile.dirname.mkpath
       FileUtils.copy_file(srcfile, dstfile)
+    end
+
+    def _blow_away(path)
+      (@dst_root + path).rmtree
+    rescue Errno::ENOENT
     end
   end
 end
