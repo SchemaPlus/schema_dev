@@ -14,7 +14,7 @@ module SchemaDev
     end
 
     def gemfiles
-      Gemfiles.build(@config)
+      Gemfiles.build(@config) and puts "* Created gemfiles"
     end
 
     def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)

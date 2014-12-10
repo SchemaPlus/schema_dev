@@ -26,6 +26,7 @@ module SchemaDev
           _copy(rails_path, "Gemfile.#{db}")
         end
       end
+      return true
     end
 
     def _copy(path, filename)
