@@ -10,7 +10,7 @@ module SchemaDev
     end
 
     def travis
-      Travis.update(@config)
+      Travis.update(@config) and puts "* Updated #{filepath}"
     end
 
     def gemfiles

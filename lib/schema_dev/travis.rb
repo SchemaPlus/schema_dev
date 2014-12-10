@@ -1,14 +1,19 @@
 require 'pathname'
 require 'yaml'
 
-module SchemaDev
-  TRAVIS_FILE = ".travis.yml"
+require_relative 'gemfile_selector'
 
+module SchemaDev
   module Travis
     extend self
 
+    TRAVIS_FILE = ".travis.yml"
+
     def build(config)
-      env = 'POSTGRESQL_DB_USER=postgres MYSQL_DB_USER="travis"'
+      env = []
+      env << 'POSTGRESQL_DB_USER=postgres' if config.dbms.include? :postgresql
+      env << 'MYSQL_DB_USER=travis' if config.dbms.include? :mysql
+      env = env.join(' ')
       gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:rails, :db)).to_s}.uniq
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
@@ -41,7 +46,7 @@ module SchemaDev
 # schema_dev gets run.
 ENDYAML
         filepath.write header + newtravis.to_yaml
-        puts "* Updated #{filepath}"
+        return true
       end
     end
   end
