@@ -33,13 +33,13 @@ class CLI < Thor
   desc "matrix", "run a command over the matrix"
   matrix_options
   def matrix(*args)
-    runner.run(args, **options.symbolize_keys)
+    runner.run(args, **options.to_h.symbolize_keys)
   end
 
   desc "bundle", "shorthand for '#{$0} matrix bundle ...'"
   matrix_options
   def bundle(*args)
-    runner.run('bundle', args, **options.symbolize_keys)
+    runner.run('bundle', args, **options.to_h.symbolize_keys)
   end
 
   desc "rake", "shorthand for '#{$0} matrix bundle exec rake ...'"
