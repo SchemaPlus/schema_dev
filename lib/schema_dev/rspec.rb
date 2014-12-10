@@ -3,8 +3,8 @@ require_relative 'rspec/db'
 module SchemaDev
   module Rspec
 
-    def self.setup_db(db=nil)
-      Db.setup(db)
+    def self.setup_db
+      Db.setup
     end
 
     def self.db_configuration

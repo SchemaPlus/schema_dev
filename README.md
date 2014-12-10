@@ -16,11 +16,11 @@ Include this as a development dependency in the client gem's `<ame>.gemfile`:
 
 #### `schema_dev.yml`
 
-The client gem needs a file `schema_dev.yml` in it's root, which specifies the testing matrix, among other things.
+The client gem needs a file `schema_dev.yml` in it's root, which specifies the testing matrix among other things.
 
 * `ruby`:  A single version of ruby, or a list of ruby versions.
 * `rails`: A single version of rails, or a list of rails versions
-* `db`: (Optional) The list of db adapters to test.  Leave this out if the gem will hardwire its tests for a single adapter.
+* `db`:  A single db adapter, or a list of db adapters.
 * `quick`: (Optional) Hash listing the version of ruby, rails, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
 
 #### Gemfiles
@@ -45,8 +45,7 @@ local changes for some reason, you'll need to rely on git to recover them.
 The client gem should include this in its `spec/spec_helper`
 
     require 'schema_dev/rspec'
-    SchemaDev::Rspec.setup_db     		 # if testing against multiple dbs, the db will be filled in automatically
-    SchemaDev::Rspec.setup_db 'sqlite3' # to hardwire a single database
+    SchemaDev::Rspec.setup_db
     
 This will take care of connecting to the test database appropriately, and will set up logging to a file specific to the test matrix cell.
 
@@ -80,7 +79,7 @@ In the root directory, you can run, e.g.,
     $ schema_dev bundle install
     $ schema_dev rspec
 
-Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--rails` and (if the gem tests multiple dbs) `--db`
+Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--rails` and `--db`
 
     $ schema_dev rspec --ruby 2.1.3 --rails 4.0
 

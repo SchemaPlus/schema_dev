@@ -7,7 +7,7 @@ module SchemaDev
 
     attr_reader :ruby, :rails, :db, :error
 
-    def initialize(ruby:, rails:, db: nil)
+    def initialize(ruby:, rails:, db:)
       @ruby_selector = RubySelector.command(ruby)
       @gemfile_selector = GemfileSelector.command(rails: rails, db: db)
     end

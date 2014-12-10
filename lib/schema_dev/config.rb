@@ -21,17 +21,13 @@ module SchemaDev
     end
 
     def initialize(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(ruby: :required, rails: :required, db: nil, exclude: nil, notify: nil, quick: nil)
+      opts = opts.keyword_args(ruby: :required, rails: :required, db: :required, exclude: nil, notify: nil, quick: nil)
       @ruby = Array.wrap(opts.ruby)
       @rails = Array.wrap(opts.rails)
       @db = Array.wrap(opts.db)
       @exclude = Array.wrap(opts.exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(tuple)}
       @notify = Array.wrap(opts.notify)
-      @quick = Array.wrap(opts.quick || {ruby: @ruby.last, rails: @rails.last, db: @db.andand.last})
-    end
-
-    def db?
-      @db.any?
+      @quick = Array.wrap(opts.quick || {ruby: @ruby.last, rails: @rails.last, db: @db.last})
     end
 
     def dbms
@@ -54,9 +50,9 @@ module SchemaDev
 
       use_ruby = [nil] unless use_ruby.any?
       use_rails = [nil] unless use_rails.any?
+      use_db = [nil] unless use_db.any?
 
-      m = use_ruby.product(use_rails)
-      m = m.product(use_db).map(&:flatten) if use_db.any?
+      m = use_ruby.product(use_rails, use_db)
       m = m.map { |_ruby, _rails, _db| Tuple.new(ruby: _ruby, rails: _rails, db: _db) }.compact
       m = m.reject(&it.match_any?(@exclude)) unless opts.excluded == :none
       m = m.map(&:to_hash)
