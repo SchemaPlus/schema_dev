@@ -22,6 +22,7 @@ module SchemaDev
       }}.reject{|ex| not gemfiles.include? ex["gemfile"]}
 
       {}.tap { |travis|
+        travis["sudo"] = false
         travis["rvm"] = config.ruby.sort
         travis["gemfile"] = gemfiles.sort
         if config.dbms.any?
