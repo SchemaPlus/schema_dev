@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "coveralls"
   spec.add_dependency "fastandand"
   spec.add_dependency "hash_keyword_args"
   spec.add_dependency "its-it"

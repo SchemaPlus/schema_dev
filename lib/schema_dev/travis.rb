@@ -25,10 +25,11 @@ module SchemaDev
         travis["rvm"] = config.ruby.sort
         travis["gemfile"] = gemfiles.sort
         if config.dbms.any?
+          travis["env"] = env
           travis["before_script"] = 'bundle exec rake create_databases'
           travis["after_script"] = 'bundle exec rake drop_databases'
-          travis["env"] = env
         end
+        travis["script"] = "bundle exec rake travis"
         travis["notifications"] = { "email" => config.notify } if config.notify.any?
         travis["matrix"] = { "exclude" => exclude.sort_by{|ex| [ex["rvm"], ex["gemfile"]]} } if exclude.any?
       }

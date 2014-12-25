@@ -24,9 +24,10 @@ gemfile:
 - gemfiles/rails-4.0/Gemfile.sqlite3
 - gemfiles/rails-4.1/Gemfile.postgresql
 - gemfiles/rails-4.1/Gemfile.sqlite3
+env: POSTGRESQL_DB_USER=postgres
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
-env: POSTGRESQL_DB_USER=postgres
+script: bundle exec rake travis
 notifications:
   email:
   - me@example.com
