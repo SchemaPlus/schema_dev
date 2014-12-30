@@ -4,6 +4,7 @@ require 'active_support/core_ext/hash'
 require 'thor'
 require_relative '../lib/schema_dev/config'
 require_relative '../lib/schema_dev/runner'
+require_relative '../lib/schema_dev/version'
 
 def runner
     $config ||= SchemaDev::Config.load
@@ -54,6 +55,11 @@ class CLI < Thor
     runner.run('bundle', 'exec', 'rspec', args, **options.to_h.symbolize_keys)
   end
 
+end
+
+if ARGV[0] == "--version"
+    puts "SchemaDev #{SchemaDev::VERSION}"
+    exit
 end
 
 CLI.start(ARGV)
