@@ -35,7 +35,12 @@ describe SchemaDev::Runner do
         Selectors.keys.each do |k|
           allow(SchemaDev::RubySelector).to receive(:system).with("which -s #{k}").and_return k == selector
         end
-        allow_any_instance_of(SchemaDev::RubySelector::Rbenv).to receive(:`).with("rbenv versions --bare").and_return RUBY_VERSION
+        case selector
+        when 'chruby-exec'
+          expect_any_instance_of(Pathname).to receive(:entries).and_return [Pathname.new("ruby-#{RUBY_VERSION}")]
+        when 'rbenv'
+          expect_any_instance_of(SchemaDev::RubySelector::Rbenv).to receive(:`).with("rbenv versions --bare").and_return RUBY_VERSION
+        end
 
         # mocking execution
         original_popen2e = Open3.method(:popen2e)
