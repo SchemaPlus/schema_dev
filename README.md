@@ -2,6 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/schema_dev.svg)](http://badge.fury.io/rb/schema_dev)
 [![Build Status](https://secure.travis-ci.org/SchemaPlus/schema_dev.svg)](http://travis-ci.org/SchemaPlus/schema_dev)
+[![Coverage Status](https://img.shields.io/coveralls/SchemaPlus/schema_dev.svg)](https://coveralls.io/r/SchemaPlus/schema_dev)
 
 Development tools for the SchemaPlus family of gems.
 
