@@ -8,6 +8,9 @@ module SchemaDev
                      end.new
       @@selector.command ruby
     end
+    def self._reset # for rspec, to avoid stickiness
+      @@selector = nil
+    end
 
     class Chruby
       def initialize
