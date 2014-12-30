@@ -1,6 +1,7 @@
 # SchemaDev
 
-[![Gem Version](https://badge.fury.io/rb/schema_dev.png)](http://badge.fury.io/rb/schema_dev)
+[![Gem Version](https://badge.fury.io/rb/schema_dev.svg)](http://badge.fury.io/rb/schema_dev)
+[![Build Status](https://secure.travis-ci.org/SchemaPlus/schema_dev.svg)](http://travis-ci.org/SchemaPlus/schema_dev)
 
 Development tools for the SchemaPlus family of gems.
 
