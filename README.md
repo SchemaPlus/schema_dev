@@ -90,6 +90,20 @@ For convenience you can also use `--quick` to run just one as specified in `sche
 If you want to pass extra arguments to a command, make sure to use `--` to avoid them being processed by `schema_dev`.  e.g.
 
 	$ schema_dev rspec --quick -- -e 'select which spec'
+
+For interactive debugging you may want to run rspec directly from the shell rather than through`schema_dev` (which doesn't give you an interactive ptty).  schema_dev echoes each command being run, preceded by a `*`.  E.g. 
+
+	$ schema_dev rspec --quick -- -e 'select which spec' -n
+
+	*** ruby 2.1.5 - rails 4.2 - db postgresql [1 of 1]
+
+	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+
+
+There's no hidden environment setup; so you can copy and paste the command line into a shell:
+
+	$ /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+
 	
 For more info, see
 
