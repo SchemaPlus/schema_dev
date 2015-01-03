@@ -15,11 +15,16 @@ module SchemaDev
     end
 
     def gemfiles
-      Gemfiles.build(@config) and puts "* Created gemfiles"
+      Gemfiles.build(@config) and puts "* Updated gemfiles"
+    end
+
+    def refresh
+      self.travis
+      self.gemfiles
     end
 
     def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
-      self.travis if freshen
+      self.refresh if freshen
 
       matrix = MatrixExecutor.new @config.matrix(quick: quick, ruby: ruby, rails: rails, db: db)
 

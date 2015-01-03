@@ -6,7 +6,7 @@ describe SchemaDev::Runner do
     config = get_config(ruby: "2.1.3", rails: "4.0", db: "sqlite3")
     runner = SchemaDev::Runner.new(config)
     in_tmpdir do
-      expect{ runner.gemfiles }.to output("* Created gemfiles\n").to_stdout
+      expect{ runner.gemfiles }.to output("* Updated gemfiles\n").to_stdout
       expect(Pathname.new("gemfiles")).to be_directory
     end
   end
@@ -60,6 +60,7 @@ describe SchemaDev::Runner do
 
       let(:expected_output) { <<ENDOUTPUT.strip }
 * Updated .travis.yml
+* Updated gemfiles
 
 
 *** ruby #{RUBY_VERSION} - rails 4.0 - db sqlite3 [1 of 2]

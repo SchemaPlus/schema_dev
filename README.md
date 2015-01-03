@@ -25,10 +25,12 @@ The client gem needs a file `schema_dev.yml` in it's root, which specifies the t
 * `db`:  A single db adapter, or a list of db adapters.
 * `quick`: (Optional) Hash listing the version of ruby, rails, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
 
+If you change this file, it's a good idea to run `schema_dev refresh` to update the auto-generated `gemfiles` and `.travis.yml` (see below).
+
 #### Gemfiles
 
 The client gem must contain a "gemfiles" directory containing the matrix of
-possible gemfiles; Generate it by running
+possible gemfiles; It will be generated/updated automatically by the `schema_dev` script whenever you run a matrix command.  You can also generate it explicitly by running
 
         $ schema_dev gemfiles
 
@@ -78,7 +80,7 @@ For PostgreSQL and MySQL you must explicitly create the databases used by the te
 
 In the root directory, you can run, e.g.,
 
-    $ schema_dev bundle install
+    $ schema_dev bundle install  # or schema_dev bundle update
     $ schema_dev rspec
 
 Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--rails` and `--db`
