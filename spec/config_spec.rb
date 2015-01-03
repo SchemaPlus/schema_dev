@@ -49,5 +49,13 @@ describe SchemaDev::Config do
       { ruby: "2.1.5", rails: "4.1", db: "postgresql" },
     ]
   end
+
+  it "uses last cell for --quick" do
+    config = get_config(ruby: %W[1.9.3 2.1.5], rails: %W[4.0 4.1], db: %W[sqlite3 postgresql])
+    expect(config.matrix quick: true).to match_array [
+      { ruby: "2.1.5", rails: "4.1", db: "postgresql" },
+    ]
+  end
+
   
 end
