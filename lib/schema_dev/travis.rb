@@ -11,22 +11,31 @@ module SchemaDev
 
     def build(config)
       env = []
-      env << 'POSTGRESQL_DB_USER=postgres' if config.dbms.include? :postgresql
-      env << 'MYSQL_DB_USER=travis' if config.dbms.include? :mysql
+      addons = {}
+      if config.dbms.include?(:postgresql)
+        env << 'POSTGRESQL_DB_USER=postgres'
+        addons['postgresql'] = "9.3"
+      end
+      if config.dbms.include?(:mysql)
+        env << 'MYSQL_DB_USER=travis'
+      end
       env = env.join(' ')
+
       gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:rails, :db)).to_s}.uniq
+
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
         ex["gemfile"] = GemfileSelector.gemfile(entry.slice(:rails, :db)).to_s
-        ex["env"] = env if config.dbms.any?
+        ex["env"] = env unless env.empty?
       }}.reject{|ex| not gemfiles.include? ex["gemfile"]}
 
       {}.tap { |travis|
         travis["sudo"] = false
         travis["rvm"] = config.ruby.sort
         travis["gemfile"] = gemfiles.sort
+        travis["env"] = env unless env.empty?
+        travis["addons"] = addons unless addons.empty?
         if config.dbms.any?
-          travis["env"] = env
           travis["before_script"] = 'bundle exec rake create_databases'
           travis["after_script"] = 'bundle exec rake drop_databases'
         end

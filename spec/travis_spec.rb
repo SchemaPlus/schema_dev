@@ -5,7 +5,7 @@ describe SchemaDev::Travis do
   it "creates travis file" do
     config = get_config(ruby: %W[1.9.3 2.1.5],
                         rails: %W[4.0 4.1],
-                        db: %W[sqlite3 postgresql],
+                        db: %W[mysql2 postgresql],
                         exclude: { ruby: "1.9.3", db: "postgresql" },
                         notify: 'me@example.com')
     in_tmpdir do
@@ -21,11 +21,13 @@ rvm:
 - 1.9.3
 - 2.1.5
 gemfile:
+- gemfiles/rails-4.0/Gemfile.mysql2
 - gemfiles/rails-4.0/Gemfile.postgresql
-- gemfiles/rails-4.0/Gemfile.sqlite3
+- gemfiles/rails-4.1/Gemfile.mysql2
 - gemfiles/rails-4.1/Gemfile.postgresql
-- gemfiles/rails-4.1/Gemfile.sqlite3
-env: POSTGRESQL_DB_USER=postgres
+env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
+addons:
+  postgresql: '9.3'
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
@@ -36,10 +38,10 @@ matrix:
   exclude:
   - rvm: 1.9.3
     gemfile: gemfiles/rails-4.0/Gemfile.postgresql
-    env: POSTGRESQL_DB_USER=postgres
+    env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
   - rvm: 1.9.3
     gemfile: gemfiles/rails-4.1/Gemfile.postgresql
-    env: POSTGRESQL_DB_USER=postgres
+    env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
 ENDTRAVIS
     end
   end
