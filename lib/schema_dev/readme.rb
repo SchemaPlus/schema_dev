@@ -14,6 +14,7 @@ module SchemaDev
     end
 
     def update
+      return false unless readme.exist?
       lines = readme.readlines
       newlines = sub_matrix(lines)
       if lines != newlines
