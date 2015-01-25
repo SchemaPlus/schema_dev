@@ -2,6 +2,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'tmpdir'
+require 'webmock/rspec'
 
 require 'schema_dev/config'
 
