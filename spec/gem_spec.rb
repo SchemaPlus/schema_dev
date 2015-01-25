@@ -44,10 +44,7 @@ describe SchemaDev::Gem do
 
     it "when in git worktree" do
       in_tmpdir do
-        FileUtils.mkdir ".git"
-        system "git config user.name '#{user_name}'"
-        system "git config user.email '#{user_email}'"
-        system "git init"
+        expect_any_instance_of(SchemaDev::Gem).to receive(:system).with(/^git rev-parse/).and_return true
         expect{SchemaDev::Gem.build("NewGem")}.to raise_error SystemExit, /\bgit\b/
       end
     end
