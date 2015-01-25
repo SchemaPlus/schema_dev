@@ -3,7 +3,7 @@ require 'schema_dev/gem'
 describe SchemaDev::Gem do
 
   let(:user_name) { "My Name" }
-  let(:user_email) { "my@email.com" }
+  let(:user_email) { "my_name@example.com" }
 
   before(:each) do
     stub_request(:get, 'https://rubygems.org/api/v1/versions/schema_monkey.json').to_return body: JSON.generate([{ built_at: Time.now, number: "0.1.2"}])
@@ -44,7 +44,10 @@ describe SchemaDev::Gem do
 
     it "when in git worktree" do
       in_tmpdir do
-        system('git init')
+        FileUtils.mkdir ".git"
+        system "git config user.name '#{user_name}'"
+        system "git config user.email '#{user_email}'"
+        system "git init"
         expect{SchemaDev::Gem.build("NewGem")}.to raise_error SystemExit, /\bgit\b/
       end
     end
