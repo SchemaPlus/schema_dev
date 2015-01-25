@@ -1,8 +1,14 @@
 require 'schema_dev/gem'
 
 describe SchemaDev::Gem do
+
+  let(:user_name) { "My Name" }
+  let(:user_email) { "my@email.com" }
+
   before(:each) do
     stub_request(:get, 'https://rubygems.org/api/v1/versions/schema_monkey.json').to_return body: JSON.generate([{ built_at: Time.now, number: "0.1.2"}])
+    allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.name").and_return user_name
+    allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.email").and_return user_email
   end
 
   around(:each) do |example|
@@ -16,6 +22,8 @@ describe SchemaDev::Gem do
       expect{SchemaDev::Gem.build("NewGem")}.not_to raise_error
       gemspec = File.read "new_gem/new_gem.gemspec"
       expect(gemspec).to include %q{"schema_monkey", "~> 0.1", ">= 0.1.2"}
+      expect(gemspec).to match(/authors.*#{user_name}/)
+      expect(gemspec).to match(/email.*#{user_email}/)
     end
   end
 
