@@ -11,28 +11,28 @@ module SchemaDev
       @config = config
     end
 
-    def travis(quiet=false)
+    def travis(quiet: false)
       if Travis.update(@config)
         puts "* Updated #{Travis::TRAVIS_FILE}" unless quiet
       end
     end
 
-    def gemfiles(quiet=false)
+    def gemfiles(quiet: false)
       if Gemfiles.build(@config)
         puts "* Updated gemfiles" unless quiet
       end
     end
 
-    def readme(quiet=false)
+    def readme(quiet: false)
       if Readme.update(@config)
         puts "* Updated README" unless quiet
       end
     end
 
-    def freshen(quiet=false)
-      self.travis(quiet)
-      self.gemfiles(quiet)
-      self.readme(quiet)
+    def freshen(quiet: false)
+      self.travis(quiet: quiet)
+      self.gemfiles(quiet: quiet)
+      self.readme(quiet: quiet)
     end
 
     def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
