@@ -3,6 +3,7 @@ require 'shellwords'
 require_relative 'matrix_executor'
 require_relative 'travis'
 require_relative 'gemfiles'
+require_relative 'readme'
 
 module SchemaDev
   class Runner
@@ -21,6 +22,11 @@ module SchemaDev
         puts "* Updated gemfiles" unless quiet
       end
     end
+
+    def readme(quiet=false)
+      if Readme.update(@config)
+        puts "* Updated README" unless quiet
+      end
     end
 
     def freshen(quiet=false)
