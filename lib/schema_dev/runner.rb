@@ -10,21 +10,27 @@ module SchemaDev
       @config = config
     end
 
-    def travis
-      Travis.update(@config) and puts "* Updated #{Travis::TRAVIS_FILE}"
+    def travis(quiet=false)
+      if Travis.update(@config)
+        puts "* Updated #{Travis::TRAVIS_FILE}" unless quiet
+      end
     end
 
-    def gemfiles
-      Gemfiles.build(@config) and puts "* Updated gemfiles"
+    def gemfiles(quiet=false)
+      if Gemfiles.build(@config)
+        puts "* Updated gemfiles" unless quiet
+      end
+    end
     end
 
-    def refresh
-      self.travis
-      self.gemfiles
+    def freshen(quiet=false)
+      self.travis(quiet)
+      self.gemfiles(quiet)
+      self.readme(quiet)
     end
 
     def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
-      self.refresh if freshen
+      self.freshen if freshen
 
       matrix = MatrixExecutor.new @config.matrix(quick: quick, ruby: ruby, rails: rails, db: db)
 
