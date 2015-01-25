@@ -19,7 +19,7 @@ describe SchemaDev::Gemfiles do
   end
 
   def relevant_diff(config, dir)
-    src = SchemaDev::Gemfiles::TEMPLATES_ROOT + dir
+    src = SchemaDev::Templates.root + dir
     diff = `diff -rq #{src} #{dir} 2>&1`.split("\n")
 
     # expect copy not to have entry for rails not in config

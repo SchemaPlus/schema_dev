@@ -3,6 +3,7 @@
 require 'active_support/core_ext/hash'
 require 'thor'
 require_relative '../lib/schema_dev/config'
+require_relative '../lib/schema_dev/gem'
 require_relative '../lib/schema_dev/runner'
 require_relative '../lib/schema_dev/version'
 
@@ -54,6 +55,10 @@ class CLI < Thor
     runner.run('bundle', 'exec', 'rspec', args, **options.to_h.symbolize_keys)
   end
 
+  desc "gem", "create a new SchemaPlus gem"
+  def gem(name)
+      SchemaDev::Gem.build(name)
+  end
 
 end
 

@@ -16,8 +16,12 @@ module SchemaDev
 
     def self._reset ; @@config = nil end  # for use by rspec
 
+    def self.read
+      new((YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
+    end
+
     def self.load
-      @@config ||= new((YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
+      @@config ||= read
     end
 
     def initialize(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args

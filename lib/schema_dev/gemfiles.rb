@@ -1,15 +1,15 @@
 require 'pathname'
 
+require_relative 'templates'
+
 module SchemaDev
 
   module Gemfiles
     extend self
 
-    TEMPLATES_ROOT = Pathname.new(__FILE__).dirname.parent.parent + "templates"
-
     def build(config)
       Dir.mktmpdir do |tmpdir|
-        @src_root = TEMPLATES_ROOT
+        @src_root = Templates.root
         @dst_root = Pathname.new(tmpdir).realpath
 
         relpath = Pathname.new("gemfiles")
