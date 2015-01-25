@@ -8,15 +8,19 @@ Development tools for the SchemaPlus family of gems.
 
 Provides support for working with multiple ruby versions, rails adapaters, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.travis.yml` file for [travis-ci](https://travis-ci.org) testing.
 
-## Installation
+## Creating a new gem for the SchemaPlus family
 
-Include this as a development dependency in the client gem's `<ame>.gemfile`:
+The `schema_dev` script has a generator for new gems:
 
-    s.add_development_dependency "schema_dev"
+	$ gem install schema_dev
+	$ schema_dev gem new_gem_name
+	
+Similar to `bundle gem`, this creates a skeleton structure for a new gem.  The structure includes appropriate dependencies on [schema_monkey](https://github.com/SchemaPlus/schema_monkey) and on `schema_dev` itself, and creates an initial `schema_dev.yml` file, etc.
+	
 
-## Setup
+## Usage
 
-#### `schema_dev.yml`
+### schema_dev.yml
 
 The client gem needs a file `schema_dev.yml` in it's root, which specifies the testing matrix among other things.
 
@@ -25,39 +29,7 @@ The client gem needs a file `schema_dev.yml` in it's root, which specifies the t
 * `db`:  A single db adapter, or a list of db adapters.
 * `quick`: (Optional) Hash listing the version of ruby, rails, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
 
-If you change this file, it's a good idea to run `schema_dev refresh` to update the auto-generated `gemfiles` and `.travis.yml` (see below).
-
-#### Gemfiles
-
-The client gem must contain a "gemfiles" directory containing the matrix of
-possible gemfiles; It will be generated/updated automatically by the `schema_dev` script whenever you run a matrix command.  You can also generate it explicitly by running
-
-        $ schema_dev gemfiles
-
-This directory should be checked in to the git repo.
-
-`schema_dev gemfiles` only generates gemfiles for the versions of rails &
-db listed in `schema_dev.yml`.  If you change the listed versions you'll
-need to re-generate.
-
-Note that generating the gemfiles blows away any previous files.  If you had made
-local changes for some reason, you'll need to rely on git to recover them.
-
-    
-#### Rspec
-
-The client gem should include this in its `spec/spec_helper`
-
-    require 'schema_dev/rspec'
-    SchemaDev::Rspec.setup_db
-    
-This will take care of connecting to the test database appropriately, and will set up logging to a file specific to the test matrix cell.
-
-#### Rake
-
-The client gem should include this in its `Rakefile`:
-
-    require 'schema_dev/tasks'
+If you change this file, it's a good idea to run `schema_dev freshen`
 
 ### Ruby selection
 
@@ -112,8 +84,49 @@ For more info, see
     $ schema_dev help
     $ schema_dev help rspec   # etc.
 
-## Generating `.travis.yml`
+## Auto-generated/updated files
 
-To keep things in sync `.travis.yml` gets automatically updated whenever you run `schema_dev matrix` or any of its shorthands.  There's also a command to just explicitly update `.travis.yml`
+Whenever you run a `schema_dev` matrix command, it first freshens the various generated files; you can also run `schema_dev freshen` manually.
 
-    $ schema_dev travis
+### gemfiles
+
+The client gem will contain a "gemfiles" subdirectory tree containing the matrix of
+possible gemfiles; this entire tree gets created/updated automatically, and should be checked into the git repo.
+
+Note that freshening the gemfiles happens automatically whenever you run a schema_dev matrix command, and blows away any previous files.  So you should not attempt to change any files in `gemfiles/*`  
+
+If you need to include extra specifications in the Gemfile (e.g. to specify a path for a gem), you can create a file `Gemfile.local` in the project root, and its contents will be included in the Gemfile.
+
+### .travis.yml
+
+The `.travis.yml` file gets created automatically.  Don't edit it by hand.
+
+### README.md
+
+`schema_dev` generates markdown describing the text matrix, and inserts it into the README.md, in a block guarded by markdown comments
+
+    [//]: # SCHEMA_DEV: MATRIX  
+    .
+    .
+    .
+    [//]: # SCHEMA_DEV: MATRIX
+
+
+## Behind-the-scenes
+
+#### Rspec
+
+The client gem's`spec/spec_helper` includes this
+
+    require 'schema_dev/rspec'
+    SchemaDev::Rspec.setup
+    
+This will take care of starting up `schema_monkey`, connecting to the test database appropriately, and and setting up logging to a file specific to the test matrix cell.
+
+#### Rake
+
+The client gem's `Rakefile` includes:
+
+    require 'schema_dev/tasks'
+    
+Which defines the rake task `create_databases` and also a task for travis-ci
