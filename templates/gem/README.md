@@ -20,7 +20,7 @@ gem "%GEM_NAME%"
 
 %GEM_NAME% is tested on
 
-[//]: # SCHEMA_DEV: MATRIX
+<!-- SCHEMA_DEV: MATRIX -->
 
 ## Usage
 
