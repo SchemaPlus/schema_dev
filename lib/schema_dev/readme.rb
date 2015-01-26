@@ -37,7 +37,7 @@ module SchemaDev
       self.matrix.group_by(&it.slice(:ruby, :rails)).each do |pair, items|
         contents << "* ruby **#{pair[:ruby]}** with rails **#{pair[:rails]}**, using #{items.map{|item| "**#{item[:db]}**"}.to_sentence(last_word_connector: ' or ')}\n"
       end
-      contents << \n"
+      contents << "\n"
       contents << "<!-- SCHEMA_DEV: MATRIX - end -->\n"
 
       before + contents + after
