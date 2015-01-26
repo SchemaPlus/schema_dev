@@ -1,5 +1,8 @@
 require 'schema_monkey'
 
+require_relative '%GEM_NAME%/version'
+
+
 # Load any mixins to ActiveRecord modules, such as:
 #
 #   require_relative '%GEM_NAME%/active_record/base'
@@ -16,6 +19,7 @@ require 'schema_monkey'
 # Any modules named %GEM_MODULE%::Middleware::<submodule-path> will
 # automatically have their .insert method called.
 
+
 # Database adapter-specific mixin, if any, will automatically #include'd in
 # its counterpart depending on which database adapter is in use.
 module %GEM_MODULE%
@@ -27,7 +31,6 @@ module %GEM_MODULE%
     end
   end
 end
-
 
 
 # Extra load-time initialization can go here.  You can delete this if you don't have any.
