@@ -6,7 +6,12 @@ describe SchemaDev::Gem do
   let(:user_email) { "my_name@example.com" }
 
   before(:each) do
-    stub_request(:get, 'https://rubygems.org/api/v1/versions/schema_monkey.json').to_return body: JSON.generate([{ built_at: Time.now, number: "0.1.2"}])
+    stub_request(:get, 'https://rubygems.org/api/v1/versions/schema_monkey.json').to_return body: JSON.generate([
+      { number: "1.0.0.pre", prerelease: true},
+      { number: "0.2.1"},
+      { number: "0.1.2"},
+      { number: "0.1.1" },
+    ])
     allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.name").and_return user_name
     allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.email").and_return user_email
   end
@@ -21,7 +26,7 @@ describe SchemaDev::Gem do
     in_tmpdir do
       expect{SchemaDev::Gem.build("NewGem")}.not_to raise_error
       gemspec = File.read "new_gem/new_gem.gemspec"
-      expect(gemspec).to include %q{"schema_monkey", "~> 0.1", ">= 0.1.2"}
+      expect(gemspec).to include %q{"schema_monkey", "~> 0.2", ">= 0.2.1"}
       expect(gemspec).to match(/authors.*#{user_name}/)
       expect(gemspec).to match(/email.*#{user_email}/)
     end

@@ -101,7 +101,7 @@ module SchemaDev
     def schema_monkey_version
       @monkey_version ||= begin
                             gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_monkey.json').body
-                            gems.reject(&it["prerelease"]).sort_by{|g| Time.new(g["built_at"])}.last["number"]
+                            gems.reject(&it["prerelease"]).sort_by(&it["number"].split('.')).last["number"]
                           end
     end
 
