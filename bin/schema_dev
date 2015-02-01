@@ -24,8 +24,6 @@ class CLI < Thor
     method_option :db, type: :string, desc: "Only execute for the specified database"
   end
 
-  default_task :rspec
-
   desc "freshen", "update files that depend on schema_dev.yml: .travis, gemfiles/, README.md"
   def freshen
       runner.freshen
@@ -63,7 +61,6 @@ class CLI < Thor
 end
 
 case
-when ARGV.empty? then CLI.start(["--help"])
 when ARGV[0] == "--version" then puts "SchemaDev #{SchemaDev::VERSION}"
 else CLI.start(ARGV)
 end
