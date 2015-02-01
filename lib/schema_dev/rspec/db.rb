@@ -26,6 +26,10 @@ module SchemaDev
         @tmproot ||= Pathname.new('tmp').tap { |path| path.mkpath }
       end
 
+      def logroot
+        @logroot ||= Pathname.new('log').tap { |path| path.mkpath }
+      end
+
       def configuration
         case @db
         when 'mysql'
@@ -73,7 +77,7 @@ module SchemaDev
       def set_logger
         ruby = "#{RUBY_ENGINE}-#{RUBY_VERSION}"
         activerecord = "activerecord-#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"
-        ActiveRecord::Base.logger = Logger.new(tmproot.join("#{ruby}.#{activerecord}.#{@db}.log").open("w"))
+        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}.#{activerecord}.#{@db}.log").open("w"))
       end
 
       module Helpers
