@@ -12,7 +12,7 @@ module SchemaDev
 
   class Config
 
-    attr_accessor :quick, :db, :ruby, :rails, :notify, :exclude
+    attr_accessor :quick, :db, :ruby, :activerecord, :notify, :exclude
 
     def self._reset ; @@config = nil end  # for use by rspec
 
@@ -25,13 +25,13 @@ module SchemaDev
     end
 
     def initialize(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(ruby: :required, rails: :required, db: :required, exclude: nil, notify: nil, quick: nil)
+      opts = opts.keyword_args(ruby: :required, activerecord: :required, db: :required, exclude: nil, notify: nil, quick: nil)
       @ruby = Array.wrap(opts.ruby)
-      @rails = Array.wrap(opts.rails)
+      @activerecord = Array.wrap(opts.activerecord)
       @db = Array.wrap(opts.db)
       @exclude = Array.wrap(opts.exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(tuple)}
       @notify = Array.wrap(opts.notify)
-      @quick = Array.wrap(opts.quick || {ruby: @ruby.last, rails: @rails.last, db: @db.last})
+      @quick = Array.wrap(opts.quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
     end
 
     def dbms
@@ -39,25 +39,25 @@ module SchemaDev
     end
 
     def matrix(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(quick: false, ruby: nil, rails: nil, db: nil, excluded: nil)
+      opts = opts.keyword_args(quick: false, ruby: nil, activerecord: nil, db: nil, excluded: nil)
       use_ruby = @ruby
-      use_rails = @rails
+      use_activerecord = @activerecord
       use_db = @db
       if opts.quick
         use_ruby = @quick.map{|q| q[:ruby]}
-        use_rails = @quick.map{|q| q[:rails]}
+        use_activerecord = @quick.map{|q| q[:activerecord]}
         use_db = @quick.map{|q| q[:db]}
       end
       use_ruby = Array.wrap(opts.ruby) if opts.ruby
-      use_rails = Array.wrap(opts.rails) if opts.rails
+      use_activerecord = Array.wrap(opts.activerecord) if opts.activerecord
       use_db = Array.wrap(opts.db) if opts.db
 
       use_ruby = [nil] unless use_ruby.any?
-      use_rails = [nil] unless use_rails.any?
+      use_activerecord = [nil] unless use_activerecord.any?
       use_db = [nil] unless use_db.any?
 
-      m = use_ruby.product(use_rails, use_db)
-      m = m.map { |_ruby, _rails, _db| Tuple.new(ruby: _ruby, rails: _rails, db: _db) }.compact
+      m = use_ruby.product(use_activerecord, use_db)
+      m = m.map { |_ruby, _activerecord, _db| Tuple.new(ruby: _ruby, activerecord: _activerecord, db: _db) }.compact
       m = m.reject(&it.match_any?(@exclude)) unless opts.excluded == :none
       m = m.map(&:to_hash)
 
@@ -68,10 +68,10 @@ module SchemaDev
       end
     end
 
-    class Tuple < KeyStruct[:ruby, :rails, :db]
+    class Tuple < KeyStruct[:ruby, :activerecord, :db]
       def match?(other)
         return false if self.ruby and other.ruby and self.ruby != other.ruby
-        return false if self.rails and other.rails and self.rails != other.rails
+        return false if self.activerecord and other.activerecord and self.activerecord != other.activerecord
         return false if self.db and other.db and self.db != other.db
         true
       end

@@ -18,13 +18,13 @@ module SchemaDev
 
         _copy(relpath, 'Gemfile.base')
 
-        config.rails.each do |rails|
+        config.activerecord.each do |activerecord|
 
-          rails_path = relpath + "rails-#{rails}"
-          _copy(rails_path, 'Gemfile.base')
+          activerecord_path = relpath + "activerecord-#{activerecord}"
+          _copy(activerecord_path, 'Gemfile.base')
 
           config.db.each do |db|
-            _copy(rails_path, "Gemfile.#{db}")
+            _copy(activerecord_path, "Gemfile.#{db}")
           end
         end
 

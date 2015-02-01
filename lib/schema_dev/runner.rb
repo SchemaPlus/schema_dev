@@ -35,10 +35,10 @@ module SchemaDev
       self.readme(quiet: quiet)
     end
 
-    def run(*args, dry_run: false, quick: false, ruby: nil, rails: nil, db: nil, freshen: true)
+    def run(*args, dry_run: false, quick: false, ruby: nil, activerecord: nil, db: nil, freshen: true)
       self.freshen if freshen
 
-      matrix = MatrixExecutor.new @config.matrix(quick: quick, ruby: ruby, rails: rails, db: db)
+      matrix = MatrixExecutor.new @config.matrix(quick: quick, ruby: ruby, activerecord: activerecord, db: db)
 
       return true if matrix.run(Shellwords.join(args.flatten), dry_run: dry_run)
 

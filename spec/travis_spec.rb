@@ -4,7 +4,7 @@ describe SchemaDev::Travis do
 
   it "creates travis file" do
     config = get_config(ruby: %W[1.9.3 2.1.5],
-                        rails: %W[4.0 4.1],
+                        activerecord: %W[4.0 4.1],
                         db: %W[mysql2 postgresql],
                         exclude: { ruby: "1.9.3", db: "postgresql" },
                         notify: 'me@example.com')
@@ -21,10 +21,10 @@ rvm:
 - 1.9.3
 - 2.1.5
 gemfile:
-- gemfiles/rails-4.0/Gemfile.mysql2
-- gemfiles/rails-4.0/Gemfile.postgresql
-- gemfiles/rails-4.1/Gemfile.mysql2
-- gemfiles/rails-4.1/Gemfile.postgresql
+- gemfiles/activerecord-4.0/Gemfile.mysql2
+- gemfiles/activerecord-4.0/Gemfile.postgresql
+- gemfiles/activerecord-4.1/Gemfile.mysql2
+- gemfiles/activerecord-4.1/Gemfile.postgresql
 env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
 addons:
   postgresql: '9.3'
@@ -37,10 +37,10 @@ notifications:
 matrix:
   exclude:
   - rvm: 1.9.3
-    gemfile: gemfiles/rails-4.0/Gemfile.postgresql
+    gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
     env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
   - rvm: 1.9.3
-    gemfile: gemfiles/rails-4.1/Gemfile.postgresql
+    gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
     env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
 ENDTRAVIS
     end

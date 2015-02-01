@@ -6,7 +6,7 @@
 
 Development tools for the SchemaPlus family of gems.
 
-Provides support for working with multiple ruby versions, rails adapaters, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.travis.yml` file for [travis-ci](https://travis-ci.org) testing.
+Provides support for working with multiple ruby versions, ActiveRecord, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.travis.yml` file for [travis-ci](https://travis-ci.org) testing.
 
 ## Creating a new gem for the SchemaPlus family
 
@@ -25,9 +25,9 @@ Similar to `bundle gem`, this creates a skeleton structure for a new gem.  The s
 The client gem needs a file `schema_dev.yml` in it's root, which specifies the testing matrix among other things.
 
 * `ruby`:  A single version of ruby, or a list of ruby versions.
-* `rails`: A single version of rails, or a list of rails versions
+* `activerecord`: A single version of ActiveRecord, or a list of ActiveRecord versions
 * `db`:  A single db adapter, or a list of db adapters.
-* `quick`: (Optional) Hash listing the version of ruby, rails, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
+* `quick`: (Optional) Hash listing the version of ruby, activerecord, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
 
 If you change this file, it's a good idea to run `schema_dev freshen`
 
@@ -55,9 +55,9 @@ In the root directory, you can run, e.g.,
     $ schema_dev bundle install  # or schema_dev bundle update
     $ schema_dev rspec
 
-Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--rails` and `--db`
+Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--activerecord` and `--db`
 
-    $ schema_dev rspec --ruby 2.1.3 --rails 4.0
+    $ schema_dev rspec --ruby 2.1.3 --activerecord 4.0
 
 For convenience you can also use `--quick` to run just one as specified in `schema_dev.yml`
 
@@ -69,14 +69,14 @@ For interactive debugging you may want to run rspec directly from the shell rath
 
 	$ schema_dev rspec --quick -- -e 'select which spec' -n
 
-	*** ruby 2.1.5 - rails 4.2 - db postgresql [1 of 1]
+	*** ruby 2.1.5 - activerecord 4.2 - db postgresql [1 of 1]
 
-	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
 
 
 There's no hidden environment setup; so you can copy and paste the command line into a shell:
 
-	$ /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+	$ /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
 
 	
 For more info, see

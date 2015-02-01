@@ -12,14 +12,14 @@ module SchemaDev
       @errors = []
       @matrix.each_with_index do |tuple, i|
         ruby = tuple[:ruby]
-        rails = tuple[:rails]
+        activerecord = tuple[:activerecord]
         db = tuple[:db]
 
-        label = "ruby #{ruby} - rails #{rails} - db #{db}"
+        label = "ruby #{ruby} - activerecord #{activerecord} - db #{db}"
         msg = "#{label} [#{i+1} of #{@matrix.size}]"
         puts "\n\n*** #{msg}\n\n"
 
-        if not Executor.new(ruby: ruby, rails: rails, db: db).run(cmd, dry_run: dry_run)
+        if not Executor.new(ruby: ruby, activerecord: activerecord, db: db).run(cmd, dry_run: dry_run)
           @errors << label
         end
       end

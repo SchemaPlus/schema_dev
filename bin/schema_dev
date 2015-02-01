@@ -20,7 +20,7 @@ class CLI < Thor
     method_option :dry_run, aliases: "-n", type: :boolean, desc: "Show what the commands would be without running them"
     method_option :quick, type: :boolean, desc: "Only execute on the 'quick' choice: #{$config ? $config.quick.inspect : "[from schema_dev.yml]"}"
     method_option :ruby, type: :string, desc: "Only execute for the specified version of ruby"
-    method_option :rails, type: :string, desc: "Only execute for the specified version of rails"
+    method_option :activerecord, aliases: "--ar", type: :string, desc: "Only execute for the specified version of activerecord"
     method_option :db, type: :string, desc: "Only execute for the specified database"
   end
 

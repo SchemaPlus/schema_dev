@@ -7,11 +7,11 @@ require_relative "gemfile_selector"
 module SchemaDev
   class Executor
 
-    attr_reader :ruby, :rails, :db, :error
+    attr_reader :ruby, :activerecord, :db, :error
 
-    def initialize(ruby:, rails:, db:)
+    def initialize(ruby:, activerecord:, db:)
       @ruby_selector = RubySelector.command(ruby)
-      @gemfile_selector = GemfileSelector.command(rails: rails, db: db)
+      @gemfile_selector = GemfileSelector.command(activerecord: activerecord, db: db)
     end
 
     def run(cmd, dry_run: false)

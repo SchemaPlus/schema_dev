@@ -3,7 +3,7 @@ require 'schema_dev/runner'
 describe SchemaDev::Runner do
 
   it "creates gemfiles" do
-    config = get_config(ruby: "2.1.3", rails: "4.0", db: "sqlite3")
+    config = get_config(ruby: "2.1.3", activerecord: "4.0", db: "sqlite3")
     runner = SchemaDev::Runner.new(config)
     in_tmpdir do
       expect{ runner.gemfiles }.to output("* Updated gemfiles\n").to_stdout
@@ -12,7 +12,7 @@ describe SchemaDev::Runner do
   end
 
   it "creates travis" do
-    config = get_config(ruby: "2.1.3", rails: "4.0", db: "sqlite3")
+    config = get_config(ruby: "2.1.3", activerecord: "4.0", db: "sqlite3")
     runner = SchemaDev::Runner.new(config)
     in_tmpdir do
       expect{ runner.travis }.to output("* Updated .travis.yml\n").to_stdout
@@ -54,7 +54,7 @@ describe SchemaDev::Runner do
         }
       end
 
-      let(:config) { get_config(ruby: RUBY_VERSION, rails: "4.0", db: %W[sqlite3 postgresql]) }
+      let(:config) { get_config(ruby: RUBY_VERSION, activerecord: "4.0", db: %W[sqlite3 postgresql]) }
       let(:runner) { SchemaDev::Runner.new(config) }
 
 
@@ -63,14 +63,14 @@ describe SchemaDev::Runner do
 * Updated gemfiles
 
 
-*** ruby #{RUBY_VERSION} - rails 4.0 - db sqlite3 [1 of 2]
+*** ruby #{RUBY_VERSION} - activerecord 4.0 - db sqlite3 [1 of 2]
 
-* /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.0/Gemfile.sqlite3 #{selection_command} %{cmd}
+* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.0/Gemfile.sqlite3 #{selection_command} %{cmd}
 %{output}
 
-*** ruby #{RUBY_VERSION} - rails 4.0 - db postgresql [2 of 2]
+*** ruby #{RUBY_VERSION} - activerecord 4.0 - db postgresql [2 of 2]
 
-* /usr/bin/env BUNDLE_GEMFILE=gemfiles/rails-4.0/Gemfile.postgresql #{selection_command} %{cmd}
+* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.0/Gemfile.postgresql #{selection_command} %{cmd}
 %{output}
 ENDOUTPUT
 
@@ -85,8 +85,8 @@ ENDOUTPUT
           expect{ runner.run("false") }.to output(expected_output % {cmd: 'false', output: nil} + <<-ENDERR).to_stdout
 
 *** 2 failures:
-\truby #{RUBY_VERSION} - rails 4.0 - db sqlite3
-\truby #{RUBY_VERSION} - rails 4.0 - db postgresql
+\truby #{RUBY_VERSION} - activerecord 4.0 - db sqlite3
+\truby #{RUBY_VERSION} - activerecord 4.0 - db postgresql
           ENDERR
         end
       end
@@ -96,8 +96,8 @@ ENDOUTPUT
           expect{ runner.run("echo", "LoadError") }.to output(expected_output % {cmd: 'echo LoadError', output: "LoadError\n"} + <<-ENDERR).to_stdout
 
 *** 2 failures:
-\truby #{RUBY_VERSION} - rails 4.0 - db sqlite3
-\truby #{RUBY_VERSION} - rails 4.0 - db postgresql
+\truby #{RUBY_VERSION} - activerecord 4.0 - db sqlite3
+\truby #{RUBY_VERSION} - activerecord 4.0 - db postgresql
           ENDERR
         end
       end

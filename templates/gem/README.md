@@ -37,7 +37,7 @@ Are you interested in contributing to %GEM_MODULE%?  Thanks!  Please follow the 
 Some things to know about to help you develop and test:
 
 * **schema_dev**:  %GEM_MODULE% uses [schema_dev](https://github.com/SchemaPlus/schema_dev) to
-  facilitate running rspec tests on the matrix of ruby, rails, and database
+  facilitate running rspec tests on the matrix of ruby, activerecord, and database
   versions that the gem supports, both locally and on
   [travis-ci](http://travis-ci.org/SchemaPlus/%GEM_NAME%)
 

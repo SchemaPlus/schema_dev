@@ -21,11 +21,11 @@ module SchemaDev
       end
       env = env.join(' ')
 
-      gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:rails, :db)).to_s}.uniq
+      gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s}.uniq
 
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
-        ex["gemfile"] = GemfileSelector.gemfile(entry.slice(:rails, :db)).to_s
+        ex["gemfile"] = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
         ex["env"] = env unless env.empty?
       }}.reject{|ex| not gemfiles.include? ex["gemfile"]}
 
