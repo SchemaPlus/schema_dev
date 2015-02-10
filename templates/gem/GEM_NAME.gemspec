@@ -3,28 +3,28 @@ lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require '%GEM_NAME%/version'
 
-Gem::Specification.new do |spec|
-  spec.name          = "%GEM_NAME%"
-  spec.version       = %GEM_MODULE%::VERSION
-  spec.authors       = ["%FULLNAME%"]
-  spec.email         = ["%EMAIL%"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = "https://github.com/SchemaPlus/%GEM_NAME%"
-  spec.license       = "MIT"
+Gem::Specification.new do |gem|
+  gem.name          = "%GEM_NAME%"
+  gem.version       = %GEM_MODULE%::VERSION
+  gem.authors       = ["%FULLNAME%"]
+  gem.email         = ["%EMAIL%"]
+  gem.summary       = %q{TODO: Write a short summary. Required.}
+  gem.description   = %q{TODO: Write a longer description. Optional.}
+  gem.homepage      = "https://github.com/SchemaPlus/%GEM_NAME%"
+  gem.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+  gem.files         = `git ls-files -z`.split("\x0")
+  gem.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  gem.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths = ["lib"]
 
-  spec.add_dependency "activerecord", "~> 4.2"
-  spec.add_dependency "schema_monkey", %SCHEMA_MONKEY_DEPENDENCY%
+  gem.add_dependency "activerecord", "~> 4.2"
+  gem.add_dependency "schema_monkey", %SCHEMA_MONKEY_DEPENDENCY%
 
-  spec.add_development_dependency "bundler", "~> 1.7"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0.0"
-  spec.add_development_dependency "schema_dev", %SCHEMA_DEV_DEPENDENCY%
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "simplecov-gem-profile"
+  gem.add_development_dependency "bundler", "~> 1.7"
+  gem.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "rspec", "~> 3.0.0"
+  gem.add_development_dependency "schema_dev", %SCHEMA_DEV_DEPENDENCY%
+  gem.add_development_dependency "simplecov"
+  gem.add_development_dependency "simplecov-gem-profile"
 end
