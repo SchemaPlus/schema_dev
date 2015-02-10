@@ -66,6 +66,7 @@ module SchemaDev
 
     def copy_template
       FileUtils.cp_r Templates.root + "gem", gem_root
+      (gem_root + "gitignore").rename gem_root + ".gitignore"
     end
 
     def rename_files

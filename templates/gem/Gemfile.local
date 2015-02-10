@@ -1,0 +1,10 @@
+# Gemfile.local
+#
+# Gems for local development, .gitignore'd to not include in released gem
+#
+
+# For path-relative gems (because Gemfile.local gets included from Gemfiles
+# in subdirectories, the actual system cwd may be elsewhere)
+cwd = Pathname.new(__FILE__).dirname 
+
+gem "byebug"
