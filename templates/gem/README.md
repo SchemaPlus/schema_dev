@@ -11,11 +11,8 @@ TODO: Write a gem description
 
 ## Installation
 
-In your application's Gemfile
+<!-- SCHEMA_DEV: TEMPLATE INSTALLATION -->
 
-```ruby
-gem "%GEM_NAME%"
-```
 ## Compatibility
 
 %GEM_MODULE% is tested on:
@@ -28,28 +25,18 @@ TODO: Write usage instructions here
 
 ## History
 
-*   See [CHANGELOG](CHANGELOG.md) for per-version release notes.
+* 0.1.0 - Initial release
 
 ## Development & Testing
 
-Are you interested in contributing to %GEM_MODULE%?  Thanks!  Please follow the standard protocol: fork, feature branch, develop, push, and issue pull request.
+Are you interested in contributing to %GEM_MODULE%?  Thanks!  Please follow
+the standard protocol: fork, feature branch, develop, push, and issue pull
+request.
 
 Some things to know about to help you develop and test:
 
-* **schema_dev**:  %GEM_MODULE% uses [schema_dev](https://github.com/SchemaPlus/schema_dev) to
-  facilitate running rspec tests on the matrix of ruby, activerecord, and database
-  versions that the gem supports, both locally and on
-  [travis-ci](http://travis-ci.org/SchemaPlus/%GEM_NAME%)
+<!-- SCHEMA_DEV: TEMPLATE USES SCHEMA_DEV -->
 
-  To to run rspec locally on the full matrix, do:
+<!-- SCHEMA_DEV: TEMPLATE USES SHEMA_PLUS_CORE -->
 
-        $ schema_dev bundle install
-        $ schema_dev rspec
-
-  You can also run on just one configuration at a time;  For info, see `schema_dev --help` or the [schema_dev](https://github.com/SchemaPlus/schema_dev) README.
-
-  The matrix of configurations is specified in `schema_dev.yml` in
-  the project root.
-
-* **schema_monkey**: %GEM_MODULE% extends ActiveRecord using
-  [schema_monkey](https://github.com/SchemaPlus/schema_monkey)'s extension API and protocols -- see its README for details.  If your contribution needs any additional monkey patching that isn't already supported by [schema_monkey](https://github.com/SchemaPlus/schema_monkey), please head over there and submit a PR.
+<!-- SCHEMA_DEV: TEMPLATE USES SHEMA_MONKEY -->
