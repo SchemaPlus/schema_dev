@@ -30,12 +30,17 @@ module SchemaDev
         @logroot ||= Pathname.new('log').tap { |path| path.mkpath }
       end
 
+      def database
+        @database ||= "schema_plus_test"
+        # @database ||= (Dir["*.gemspec"].first || "schema_dev_test").sub(/\.gemspec$/, '') + "_test"
+      end
+
       def configuration
         case @db
         when 'mysql'
           {
             :adapter => 'mysql',
-            :database => 'schema_plus_test',
+            :database => database,
             :username => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
             :encoding => 'utf8',
             :min_messages => 'warning'
@@ -43,7 +48,7 @@ module SchemaDev
         when 'mysql2'
           {
             :adapter => 'mysql2',
-            :database => 'schema_plus_test',
+            :database => database,
             :username => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
             :encoding => 'utf8',
             :min_messages => 'warning'
@@ -52,13 +57,13 @@ module SchemaDev
           {
             :adapter => 'postgresql',
             :username => ENV['POSTGRESQL_DB_USER'],
-            :database => 'schema_plus_test',
+            :database => database,
             :min_messages => 'warning'
           }
         when 'sqlite3'
           {
             :adapter => 'sqlite3',
-            :database => tmproot.join('schema_plus.sqlite3').to_s
+            :database => tmproot.join("#{database}.sqlite3").to_s
           }
         else
           raise "Unknown db adapter #{@db.inspect}"
