@@ -48,7 +48,7 @@ describe SchemaDev::Gem do
       context "subdir gem" do
         Given(:gem_name) { "schema_plus_new_gem" }
         Then { expect(gemspec).to include %q{require 'schema_plus/new_gem/version'} }
-        Then { expect(File.read "schema_plus_new_gem/lib/schema_plus_new_gem.rb").to include %q{require_relative 'schema_plus/new_gem.rb'} }
+        Then { expect(File.read "schema_plus_new_gem/lib/schema_plus_new_gem.rb").to include %q{require_relative 'schema_plus/new_gem'} }
         Then { expect(File.read "schema_plus_new_gem/lib/schema_plus/new_gem.rb").to include %q{SchemaMonkey.register SchemaPlus::NewGem} }
       end
   end

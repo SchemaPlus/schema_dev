@@ -102,7 +102,7 @@ module SchemaDev
       libdir.mkpath
       FileUtils.mv aside, subdir
       (gem_root + "lib" + "#{gem_name}.rb").write <<-END.lstrip
-        require_relative '#{gem_parent_name}/#{gem_base_name}.rb'
+        require_relative '#{gem_parent_name}/#{gem_base_name}'
       END
     end
 
