@@ -1,8 +1,10 @@
 require 'faraday'
+require 'json'
 require 'fileutils'
 require 'pathname'
 require 'active_support/core_ext/string'
 
+require_relative 'runner'
 require_relative 'templates'
 
 module SchemaDev
@@ -11,12 +13,24 @@ module SchemaDev
       new(name).build
     end
 
-    attr_accessor :gem_name, :gem_module, :gem_root, :fullname, :email
+    attr_accessor :gem_name, :gem_module, :gem_root, :gem_parent_name, :gem_base_name, :gem_lib_path, :fullname, :email
 
     def initialize(name)
       self.gem_name = name.underscore
-      self.gem_module = gem_name.camelize.sub(/^SchemaPlus(?=\w+)/, 'SchemaPlus::')
       self.gem_root = Pathname.new(gem_name)
+      if gem_name =~ /^(schema_plus)_(.*)/
+        parent, base = [$1, $2]
+        self.gem_module = [parent, base].map(&:camelize).join('::')
+        self.gem_lib_path = [parent, base].join('/')
+        self.gem_parent_name = parent
+        self.gem_base_name = base
+        @subdir = true
+      else
+        self.gem_module = gem_name.camelize
+        self.gem_lib_path = gem_name
+        self.gem_base_name = gem_name
+        @subdir = false
+      end
       get_fullname_and_email
     end
 
@@ -26,6 +40,7 @@ module SchemaDev
       copy_template
       self.gem_root = self.gem_root.realpath
       rename_files
+      fixup_subdir if @subdir
       substitute_keys
       freshen
       git_init
@@ -73,6 +88,22 @@ module SchemaDev
       Dir.glob(gem_root + "**/*GEM_NAME*").each do |path|
         FileUtils.mv path, path.gsub(/GEM_NAME/, gem_name)
       end
+      Dir.glob(gem_root + "**/*GEM_BASE_NAME*").each do |path|
+        FileUtils.mv path, path.gsub(/GEM_BASE_NAME/, gem_base_name)
+      end
+    end
+
+    def fixup_subdir
+      libdir = gem_root + "lib"
+      aside = libdir.to_s + "x"
+      subdir = libdir + gem_parent_name
+
+      FileUtils.mv libdir, aside
+      libdir.mkpath
+      FileUtils.mv aside, subdir
+      (gem_root + "lib" + "#{gem_name}.rb").write <<-END.lstrip
+        require_relative '#{gem_parent_name}/#{gem_base_name}.rb'
+      END
     end
 
     def substitute_keys
@@ -84,10 +115,12 @@ module SchemaDev
 
     def subs(s)
       s = s.gsub('%GEM_NAME%', gem_name)
+      s = s.gsub('%GEM_BASE_NAME%', gem_base_name)
+      s = s.gsub('%GEM_LIB_PATH%', gem_lib_path)
       s = s.gsub('%GEM_MODULE%', gem_module)
       s = s.gsub('%FULLNAME%', fullname)
       s = s.gsub('%EMAIL%', email)
-      s = s.gsub('%SCHEMA_MONKEY_DEPENDENCY%', dependency(schema_monkey_version))
+      s = s.gsub('%SCHEMA_PLUS_CORE_DEPENDENCY%', dependency(schema_plus_core_version))
       s = s.gsub('%SCHEMA_DEV_DEPENDENCY%', dependency(SchemaDev::VERSION))
       s = s.gsub('%YEAR%', Time.now.strftime("%Y"))
     end
@@ -99,9 +132,9 @@ module SchemaDev
       dep
     end
 
-    def schema_monkey_version
-      @monkey_version ||= begin
-                            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_monkey.json').body
+    def schema_plus_core_version
+      @core_version ||= begin
+                            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_plus_core.json').body
                             gems.reject(&it["prerelease"]).sort_by(&it["number"].split('.')).last["number"]
                           end
     end

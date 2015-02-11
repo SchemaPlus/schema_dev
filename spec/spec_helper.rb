@@ -1,6 +1,7 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'rspec/given'
 require 'tmpdir'
 require 'webmock/rspec'
 
