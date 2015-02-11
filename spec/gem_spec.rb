@@ -12,10 +12,15 @@ describe SchemaDev::Gem do
     end
   end
 
-  context "builds" do
+  Given(:user_name) { "My Name" }
+  Given(:user_email) { "my_name@example.com" }
 
-    Given(:user_name) { "My Name" }
-    Given(:user_email) { "my_name@example.com" }
+  Given {
+    allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.name").and_return user_name
+    allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.email").and_return user_email
+  }
+
+  context "builds" do
 
     Given {
       stub_request(:get, 'https://rubygems.org/api/v1/versions/schema_plus_core.json').to_return body: JSON.generate([
@@ -24,8 +29,6 @@ describe SchemaDev::Gem do
         { number: "0.1.2"},
         { number: "0.1.1" },
       ])
-      allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.name").and_return user_name
-      allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.email").and_return user_email
     }
 
     When { SchemaDev::Gem.build gem_name }
@@ -53,7 +56,7 @@ describe SchemaDev::Gem do
   context "complains" do
 
     context "when no git user.name" do
-      Given { allow_any_instance_of(SchemaDev::Gem).to receive(:`).with("git config user.name").and_return "" }
+      Given(:user_name) { "" }
       Then { expect{SchemaDev::Gem.build("NewGem")}.to raise_error SystemExit, /who are you/i }
     end
 
