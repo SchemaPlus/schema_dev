@@ -30,5 +30,5 @@ describe SchemaDev::Gemfiles do
   end
 
 end
-        
+
 

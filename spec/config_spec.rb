@@ -57,5 +57,5 @@ describe SchemaDev::Config do
     ]
   end
 
-  
+
 end

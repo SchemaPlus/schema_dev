@@ -33,11 +33,11 @@ If you change this file, it's a good idea to run `schema_dev freshen`
 
 ### Ruby selection
 
-You must have one of [chruby](https://github.com/postmodern/chruby), [rbenv](https://github.com/sstephenson/rbenv) or [rvm](http://rvm.io) installed and working.  Within it, have available whichever ruby versions you want to test.  
+You must have one of [chruby](https://github.com/postmodern/chruby), [rbenv](https://github.com/sstephenson/rbenv) or [rvm](http://rvm.io) installed and working.  Within it, have available whichever ruby versions you want to test.
 
-### Database 
+### Database
 
-Of course you must have installed whichever database(s) you want to test. 
+Of course you must have installed whichever database(s) you want to test.
 
 For PostgreSQL and MySQL the tests need a db user with permissions to create and access databases: The default username used by the specs is 'schema_plus' for both PostgreSQL and MySQL; you can change them via:
 
@@ -65,7 +65,7 @@ If you want to pass extra arguments to a command, make sure to use `--` to avoid
 
 	$ schema_dev rspec --quick -- -e 'select which spec'
 
-For interactive debugging you may want to run rspec directly from the shell rather than through`schema_dev` (which doesn't give you an interactive ptty).  schema_dev echoes each command being run, preceded by a `*`.  E.g. 
+For interactive debugging you may want to run rspec directly from the shell rather than through`schema_dev` (which doesn't give you an interactive ptty).  schema_dev echoes each command being run, preceded by a `*`.  E.g.
 
 	$ schema_dev rspec --quick -- -e 'select which spec' -n
 
@@ -93,7 +93,7 @@ Whenever you run a `schema_dev` matrix command, it first freshens the various ge
 The client gem will contain a "gemfiles" subdirectory tree containing the matrix of
 possible gemfiles; this entire tree gets created/updated automatically, and should be checked into the git repo.
 
-Note that freshening the gemfiles happens automatically whenever you run a schema_dev matrix command, and blows away any previous files.  So you should not attempt to change any files in `gemfiles/*`  
+Note that freshening the gemfiles happens automatically whenever you run a schema_dev matrix command, and blows away any previous files.  So you should not attempt to change any files in `gemfiles/*`
 
 If you need to include extra specifications in the Gemfile (e.g. to specify a path for a gem), you can create a file `Gemfile.local` in the project root, and its contents will be included in the Gemfile.
 
@@ -105,7 +105,7 @@ The `.travis.yml` file gets created automatically.  Don't edit it by hand.
 
 `schema_dev` generates markdown describing the text matrix, and inserts it into the README.md, in a block guarded by markdown comments
 
-    [//]: # SCHEMA_DEV: MATRIX  
+    [//]: # SCHEMA_DEV: MATRIX
     .
     .
     .
@@ -120,7 +120,7 @@ The client gem's`spec/spec_helper` includes this
 
     require 'schema_dev/rspec'
     SchemaDev::Rspec.setup
-    
+
 This will take care of starting up `schema_monkey`, connecting to the test database appropriately, and and setting up logging to a file specific to the test matrix cell.
 
 #### Rake
@@ -128,5 +128,5 @@ This will take care of starting up `schema_monkey`, connecting to the test datab
 The client gem's `Rakefile` includes:
 
     require 'schema_dev/tasks'
-    
+
 Which defines the rake task `create_databases` and also a task for travis-ci

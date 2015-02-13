@@ -44,7 +44,7 @@ describe SchemaDev::Runner do
 
         # mocking execution
         original_popen2e = Open3.method(:popen2e)
-        allow(Open3).to receive(:popen2e) { |cmd, &block| 
+        allow(Open3).to receive(:popen2e) { |cmd, &block|
           cmd = case cmd
                 when /false$/ then "false"
                 when /true$/ then "true"
