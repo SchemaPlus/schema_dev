@@ -16,10 +16,11 @@ module SchemaDev
     def update
       return false unless readme.exist?
       lines = readme.readlines
-      newlines = sub_matrix(lines)
+      newlines = sub_matrix(lines.dup)
       newlines = sub_templates(newlines)
-      if lines != newlines
-        readme.write Gem.new(Pathname.pwd.basename.to_s).subs(newlines.join)
+      newreadme = Gem.new(Pathname.pwd.basename.to_s).subs(newlines.join)
+      if newreadme != lines.join
+        readme.write newreadme
         return true
       end
     end
