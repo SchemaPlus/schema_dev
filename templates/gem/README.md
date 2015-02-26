@@ -7,7 +7,7 @@
 
 TODO: Write a gem description
 
-%GEM_MODULE% is part of the [SchemaPlus](https://github.com/SchemaPlus/) family of Ruby on Rails extension gems.
+%GEM_MODULE% is part of the [SchemaPlus](https://github.com/SchemaPlus/) family of Ruby on Rails ActiveRecord extension gems.
 
 ## Installation
 

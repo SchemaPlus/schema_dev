@@ -4,7 +4,6 @@ module SchemaDev
   module Rspec
 
     def self.setup
-      SchemaMonkey.insert
       Db.setup
     end
 
