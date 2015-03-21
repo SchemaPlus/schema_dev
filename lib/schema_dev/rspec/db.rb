@@ -80,9 +80,9 @@ module SchemaDev
       end
 
       def set_logger
-        ruby = "#{RUBY_ENGINE}-#{RUBY_VERSION}"
-        activerecord = "activerecord-#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}"
-        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}.#{activerecord}.#{@db}.log").open("w"))
+        ruby = "#{RUBY_ENGINE}#{RUBY_VERSION}"
+        activerecord = "activerecord#{ActiveRecord.version}"
+        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}-#{activerecord}-#{@db}.log").open("w"))
       end
 
       module Helpers
