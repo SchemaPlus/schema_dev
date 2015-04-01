@@ -27,7 +27,7 @@ gemfile:
 - gemfiles/activerecord-4.1/Gemfile.postgresql
 env: POSTGRESQL_DB_USER=postgres MYSQL_DB_USER=travis
 addons:
-  postgresql: '9.3'
+  postgresql: '9.4'
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis

@@ -14,7 +14,7 @@ module SchemaDev
       addons = {}
       if config.dbms.include?(:postgresql)
         env << 'POSTGRESQL_DB_USER=postgres'
-        addons['postgresql'] = "9.3"
+        addons['postgresql'] = "9.4"
       end
       if config.dbms.include?(:mysql)
         env << 'MYSQL_DB_USER=travis'
