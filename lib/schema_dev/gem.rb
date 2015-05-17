@@ -120,7 +120,7 @@ module SchemaDev
       s = s.gsub('%GEM_MODULE%', gem_module)
       s = s.gsub('%FULLNAME%', fullname)
       s = s.gsub('%EMAIL%', email)
-      s = s.gsub('%SCHEMA_PLUS_CORE_DEPENDENCY%', dependency(schema_plus_core_version))
+      s = s.gsub('%SCHEMA_PLUS_CORE_DEPENDENCY%') { dependency(schema_plus_core_version) }
       s = s.gsub('%SCHEMA_DEV_DEPENDENCY%', dependency(SchemaDev::VERSION))
       s = s.gsub('%YEAR%', Time.now.strftime("%Y"))
     end
