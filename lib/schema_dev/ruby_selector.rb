@@ -1,11 +1,22 @@
+require 'pathname'
+require 'which_works'
+
 module SchemaDev
   module RubySelector
     def self.command(ruby)
-      @@selector ||= case
-                     when system('which -s chruby-exec') then Chruby
-                     when system('which -s rvm') then Rvm
-                     else Rbenv
-                     end.new
+      @@selector ||= nil
+      if @@selector.nil?
+        managers = [ ['chruby-exec', Chruby],
+                     ['rvm', Rvm],
+                     ['rbenv', Rbenv]
+                   ]
+        sel = managers.find { |cmd,kls| Which.which(cmd) }
+        if sel
+          @@selector = sel[1].new
+        else
+          abort("no ruby version manager (#{ managers.collect{|mgr|mgr[0]}.join(', ') }) found")
+        end
+      end
       @@selector.command ruby
     end
     def self._reset # for rspec, to avoid stickiness
@@ -17,8 +28,10 @@ module SchemaDev
         @rubies = Pathname.new(ENV['HOME']).join(".rubies").entries().map(&its.basename.to_s)
       end
       def command(ruby)
+        bash = Which.which 'bash'
+        abort("no bash shell found") if bash.nil?
         ruby = @rubies.select(&it =~ /^(ruby-)?#{ruby}(-p.*)?$/).last || ruby
-        "SHELL=`which bash` chruby-exec #{ruby} --"
+        "SHELL=\"#{bash}\" chruby-exec #{ruby} --"
       end
     end
 
