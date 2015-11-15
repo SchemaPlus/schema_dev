@@ -22,7 +22,7 @@ Similar to `bundle gem`, this creates a skeleton structure for a new gem.  The s
 
 ### schema_dev.yml
 
-The client gem needs a file `schema_dev.yml` in it's root, which specifies the testing matrix among other things.
+The client gem needs a file `schema_dev.yml` in its root, which specifies the testing matrix among other things.
 
 * `ruby`:  A single version of ruby, or a list of ruby versions.
 * `activerecord`: A single version of ActiveRecord, or a list of ActiveRecord versions
