@@ -32,11 +32,9 @@ describe SchemaDev::Runner do
 
     describe "matrix (#{selector})" do
       before(:each) do
-        # mocking RubySelector to find selector
+        # mocking Which.which to find selector
         SchemaDev::RubySelector._reset
-        Selectors.keys.each do |k|
-          allow(SchemaDev::RubySelector).to receive(:system).with("which -s #{k}").and_return k == selector
-        end
+        allow(Which).to receive(:which) {|cmd| ["bash", selector].include?(cmd) ? "/usr/local/bin/#{cmd}" : nil }
         case selector
         when 'chruby-exec'
           expect_any_instance_of(Pathname).to receive(:entries).and_return [Pathname.new("ruby-#{RUBY_VERSION}")]
