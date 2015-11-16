@@ -4,44 +4,43 @@ require 'which_works'
 module SchemaDev
   module RubySelector
     def self.command(ruby)
-      @@selector ||= nil
-      if @@selector.nil?
-        managers = [ ['chruby-exec', Chruby],
-                     ['rvm', Rvm],
-                     ['rbenv', Rbenv]
-                   ]
-        sel = managers.find { |cmd,kls| Which.which(cmd) }
-        if sel
-          @@selector = sel[1].new
-        else
-          abort("no ruby version manager (#{ managers.collect{|mgr|mgr[0]}.join(', ') }) found")
-        end
-      end
+      @@selector ||= [Chruby, Rvm, Rbenv].find(&:if_exists).andand.new || abort("No ruby version manager found")
       @@selector.command ruby
     end
     def self._reset # for rspec, to avoid stickiness
       @@selector = nil
     end
 
-    class Chruby
+    class ManagerBase
+      def self.if_exists
+        Which.which const_get :CORE_COMMAND
+      end
+    end
+
+    class Chruby < ManagerBase
+      CORE_COMMAND = "chruby-exec"
+
       def initialize
         @rubies = Pathname.new(ENV['HOME']).join(".rubies").entries().map(&its.basename.to_s)
       end
       def command(ruby)
-        bash = Which.which 'bash'
-        abort("no bash shell found") if bash.nil?
+        bash = Which.which 'bash' || abort("no bash shell found")
         ruby = @rubies.select(&it =~ /^(ruby-)?#{ruby}(-p.*)?$/).last || ruby
-        "SHELL=\"#{bash}\" chruby-exec #{ruby} --"
+        "SHELL=#{bash} #{CORE_COMMAND} #{ruby} --"
       end
     end
 
-    class Rvm
+    class Rvm < ManagerBase
+      CORE_COMMAND = "rvm"
+
       def command(ruby)
-        "rvm #{ruby} do"
+        "#{CORE_COMMAND} #{ruby} do"
       end
     end
 
-    class Rbenv
+    class Rbenv < ManagerBase
+      CORE_COMMAND = "rbenv"
+
       def initialize
         # because we're running within a ruby program that was launched by
         # rbenv, we already have various environment variables set up.  need
