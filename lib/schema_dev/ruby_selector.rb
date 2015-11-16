@@ -4,7 +4,7 @@ require 'which_works'
 module SchemaDev
   module RubySelector
     def self.command(ruby)
-      @@selector ||= [Chruby, Rvm, Rbenv].find(&:if_exists).andand.new || abort("No ruby version manager found")
+      @@selector ||= [Chruby, Rvm, Rbenv].find(&:installed?).andand.new || abort("No ruby version manager found")
       @@selector.command ruby
     end
     def self._reset # for rspec, to avoid stickiness
@@ -12,7 +12,7 @@ module SchemaDev
     end
 
     class ManagerBase
-      def self.if_exists
+      def self.installed?
         Which.which const_get :CORE_COMMAND
       end
     end
