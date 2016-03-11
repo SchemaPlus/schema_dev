@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "its-it"
   spec.add_dependency "key_struct"
   spec.add_dependency "thor"
+  spec.add_dependency "which_works"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
