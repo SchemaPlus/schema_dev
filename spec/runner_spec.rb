@@ -23,7 +23,7 @@ describe SchemaDev::Runner do
   end
 
   Selectors = {
-    'chruby-exec' => "SHELL=#{Which.which 'bash'} chruby-exec ruby-#{RUBY_VERSION} --",
+    'chruby-exec' => "SHELL=/usr/local/bin/bash chruby-exec ruby-#{RUBY_VERSION} --",
     'rvm' => "rvm #{RUBY_VERSION} do",
     'rbenv' => "RBENV_VERSION=#{RUBY_VERSION}"
   }
