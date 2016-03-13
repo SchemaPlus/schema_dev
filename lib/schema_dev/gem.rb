@@ -15,6 +15,47 @@ module SchemaDev
 
     attr_accessor :gem_name, :gem_module, :gem_root, :gem_parent_name, :gem_base_name, :gem_lib_path, :fullname, :email
 
+    class TemplateEnv 
+      extend Forwardable
+
+      def_delegators :@gem, :gem_name, :gem_module, :gem_root, :gem_parent_name, :gem_base_name, :gem_lib_path, :fullname, :email
+
+      def initialize(gem)
+        @gem = gem
+      end
+
+      def schema_plus_core_dependency
+        _dependency(self.class.schema_plus_core_version)
+      end
+
+      def schema_dev_dependency
+        _dependency(SchemaDev::VERSION)
+      end
+
+      def year
+        Time.now.strftime("%Y")
+      end
+
+      def get_binding
+        binding
+      end
+      
+      def self.schema_plus_core_version
+        @core_version ||= begin
+                            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_plus_core.json').body
+                            gems.reject(&it["prerelease"]).sort_by(&it["number"].split('.')).last["number"]
+                          end
+      end
+
+      def _dependency(v)
+        major, minor, patch = v.split('.')
+        dep = %Q{"~> #{major}.#{minor}"}
+        dep += %Q{, ">= #{v}"} if patch != "0"
+        dep
+      end
+        
+    end
+
     def initialize(name)
       self.gem_name = name.underscore
       self.gem_root = Pathname.new(gem_name)
@@ -41,7 +82,6 @@ module SchemaDev
       self.gem_root = self.gem_root.realpath
       rename_files
       fixup_subdir if @subdir
-      substitute_keys
       freshen
       git_init
       puts <<-END.strip_heredoc
@@ -80,11 +120,11 @@ module SchemaDev
     end
 
     def copy_template
-      FileUtils.cp_r Templates.root + "gem", gem_root
-      (gem_root + "gitignore").rename gem_root + ".gitignore"
+      Templates.install_subtree src: "gem", dst: gem_root, bound: template_binding
     end
 
     def rename_files
+      (gem_root + "gitignore").rename gem_root + ".gitignore"
       Dir.glob(gem_root + "**/*GEM_NAME*").each do |path|
         FileUtils.mv path, path.gsub(/GEM_NAME/, gem_name)
       end
@@ -106,37 +146,12 @@ module SchemaDev
       END
     end
 
-    def substitute_keys
-      gem_root.find.each do |path|
-        next unless path.file?
-        path.write subs(path.read)
-      end
+    def erb(s)
+      ERB.new(s).result template_binding
     end
 
-    def subs(s)
-      s = s.gsub('%GEM_NAME%', gem_name)
-      s = s.gsub('%GEM_BASE_NAME%', gem_base_name)
-      s = s.gsub('%GEM_LIB_PATH%', gem_lib_path)
-      s = s.gsub('%GEM_MODULE%', gem_module)
-      s = s.gsub('%FULLNAME%', fullname)
-      s = s.gsub('%EMAIL%', email)
-      s = s.gsub('%SCHEMA_PLUS_CORE_DEPENDENCY%') { dependency(schema_plus_core_version) }
-      s = s.gsub('%SCHEMA_DEV_DEPENDENCY%', dependency(SchemaDev::VERSION))
-      s = s.gsub('%YEAR%', Time.now.strftime("%Y"))
-    end
-
-    def dependency(v)
-      major, minor, patch = v.split('.')
-      dep = %Q{"~> #{major}.#{minor}"}
-      dep += %Q{, ">= #{v}"} if patch != "0"
-      dep
-    end
-
-    def schema_plus_core_version
-      @core_version ||= begin
-                            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_plus_core.json').body
-                            gems.reject(&it["prerelease"]).sort_by(&it["number"].split('.')).last["number"]
-                          end
+    def template_binding
+      @template_binding ||= TemplateEnv.new(self).get_binding
     end
 
     def freshen

@@ -19,14 +19,23 @@ describe SchemaDev::Gemfiles do
   end
 
   def relevant_diff(config, dir)
-    src = SchemaDev::Templates.root + dir
-    diff = `diff -rq #{src} #{dir} 2>&1`.split("\n")
+    Dir.mktmpdir do |no_erb_root|
+      no_erb_root = Pathname(no_erb_root)
+      erb_root = SchemaDev::Templates.root + dir 
+      Pathname.glob(erb_root + "**/*").select(&:file?).each do |p|
+        d = (no_erb_root+p.relative_path_from(erb_root)).sub_ext('')
+        d.dirname.mkpath
+        d.write p.read
+      end
 
-    # expect copy not to have entry for activerecord not in config
-    diff.reject!{ |d| d =~ %r[Only in #{src}: activerecord-(.*)] and not config.activerecord.include? $1 }
+      diff = `diff -rq #{no_erb_root} #{dir} 2>&1`.split("\n")
 
-    # expect copy not to have entry for db not in config
-    diff.reject!{ |d| d =~ %r[Only in #{src}.*: Gemfile.(.*)] and not config.db.include? $1 }
+      # expect copy not to have entry for activerecord not in config
+      diff.reject!{ |d| d =~ %r[Only in #{no_erb_root}: activerecord-(.*)] and not config.activerecord.include? $1 }
+
+      # expect copy not to have entry for db not in config
+      diff.reject!{ |d| d =~ %r[Only in #{no_erb_root}.*: Gemfile.(.*)] and not config.db.include? $1 }
+    end
   end
 
 end

@@ -1,0 +1,13 @@
+require 'schema_plus/core'
+
+require_relative '<%= gem_base_name %>/version'
+
+# Load any mixins to ActiveRecord modules, such as:
+#
+#require_relative '<%= gem_base_name %>/active_record/base'
+
+# Load any middleware, such as:
+#
+# require_relative '<%= gem_base_name %>/middleware/model'
+
+SchemaMonkey.register <%= gem_module %>
