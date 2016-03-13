@@ -38,14 +38,14 @@ module SchemaDev
     end
 
     def sub_templates(lines)
-      Pathname.glob(SchemaDev::Templates.root + "README" + "*.md").each do |template|
+      Pathname.glob(SchemaDev::Templates.root + "README" + "*.md.erb").each do |template|
         lines = sub_template(template, lines)
       end
       lines
     end
 
     def sub_template(template, lines)
-      key = template.basename.sub_ext('').to_s.upcase.tr('.', ' ')
+      key = template.basename(".md.erb").to_s.upcase.tr('.', ' ')
 
       replace_block(lines, %r{^\s*<!-- SCHEMA_DEV: TEMPLATE #{key}}) do |contents|
         contents << "<!-- SCHEMA_DEV: TEMPLATE #{key} - begin -->\n"
