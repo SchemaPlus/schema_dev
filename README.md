@@ -130,3 +130,9 @@ The client gem's `Rakefile` includes:
     require 'schema_dev/tasks'
 
 Which defines the rake task `create_databases` and also a task for travis-ci
+
+## History
+
+Release notes for schema_dev versions:
+
+* **3.6.0** - Add support for AR 4.2.6; fix mysql2 dependencies; internal improvements and bug fixes.  Thanks to [@dmeranda](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Admeranda) and [@dholdren](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Adholdren)
