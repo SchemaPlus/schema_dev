@@ -14,7 +14,7 @@ module SchemaDev
     end
 
     def self.install_relative(src:, dst:, bound: nil)
-      srcfile = @root + src
+      srcfile = root + src
       dstfile = dst + src
       _install(srcfile, dstfile, bound)
     end
