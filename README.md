@@ -28,6 +28,7 @@ The client gem needs a file `schema_dev.yml` in its root, which specifies the te
 * `activerecord`: A single version of ActiveRecord, or a list of ActiveRecord versions
 * `db`:  A single db adapter, or a list of db adapters.
 * `quick`: (Optional) Hash listing the version of ruby, activerecord, and db to use with `--quick` option.  If not specified, the default is to use the last entry in each list.
+* `exclude`: (Optional) An array of hashes listing parts of the matrix to exclude.  Each hash in the array may leave off `ruby`, `activerecord` and/or `db` to exclude the slice along the missing dimension
 
 If you change this file, it's a good idea to run `schema_dev freshen`
 
