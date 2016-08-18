@@ -3,11 +3,9 @@ require 'schema_dev/gem'
 describe SchemaDev::Gem do
 
   around(:each) do |example|
-    silence_stream(STDOUT) do
-      silence_stream(STDERR) do
-        in_tmpdir do
-          example.run
-        end
+    in_tmpdir do
+      suppress_stdout_stderr do
+        example.run
       end
     end
   end
