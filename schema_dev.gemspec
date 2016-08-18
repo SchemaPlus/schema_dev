@@ -18,20 +18,20 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "activesupport"
-  gem.add_dependency "coveralls"
-  gem.add_dependency "faraday"
-  gem.add_dependency "fastandand"
-  gem.add_dependency "hash_keyword_args"
-  gem.add_dependency "its-it"
-  gem.add_dependency "key_struct"
-  gem.add_dependency "thor"
-  gem.add_dependency "which_works"
+  gem.add_dependency "activesupport", "~> 5.0"
+  gem.add_dependency "coveralls", "~> 0.8"
+  gem.add_dependency "faraday", "~> 0.9"
+  gem.add_dependency "fastandand", "~> 1.0"
+  gem.add_dependency "hash_keyword_args", "~> 0.1"
+  gem.add_dependency "its-it", "~> 1.3"
+  gem.add_dependency "key_struct", "~> 0.4"
+  gem.add_dependency "thor", "~> 0.19"
+  gem.add_dependency "which_works", "~> 1.0"
 
   gem.add_development_dependency "bundler", "~> 1.7"
   gem.add_development_dependency "rake", "~> 10.0"
   gem.add_development_dependency "rspec", "~> 3.0"
-  gem.add_development_dependency "rspec-given"
-  gem.add_development_dependency "simplecov"
-  gem.add_development_dependency "webmock"
+  gem.add_development_dependency "rspec-given", "~> 3.8"
+  gem.add_development_dependency "simplecov", "~> 0.12"
+  gem.add_development_dependency "webmock", "~> 2.1"
 end
