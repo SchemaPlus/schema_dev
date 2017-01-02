@@ -136,6 +136,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **3.8.0** - Add support for AR 5.0.1
 * **3.7.1** - Properly constrain AR 5.0 gemfiles to AR ~> 5.0.0
 * **3.7.0** - Add support for AR 5.0.0 (beta)
 * **3.6.2** - Fix README template error introduced in 3.6.0
