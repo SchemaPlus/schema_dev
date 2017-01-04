@@ -137,6 +137,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **3.8.1** - Fixed Gemnasium badge.
 * **3.8.0** - Add support for AR 5.0.1
 * **3.7.1** - Properly constrain AR 5.0 gemfiles to AR ~> 5.0.0
 * **3.7.0** - Add support for AR 5.0.0 (beta)
@@ -144,3 +145,4 @@ Release notes for schema_dev versions:
 * **3.6.1** - Further fix mysql2 dependencies.
 * **3.6.0** - Add support for AR 4.2.6; fix mysql2 dependencies; internal improvements and bug fixes.  Thanks to [@dmeranda](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Admeranda) and [@dholdren](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Adholdren)
 G
+
