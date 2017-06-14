@@ -137,6 +137,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **3.10.0** - Add support for 5.1 (i.e. 5.1.\*) and lock down dependencies on *.*
 * **3.9.0** - Add support for AR 5.0.2, 5.0.3, 5.1.0 and 5.1.1. Thanks to [@aliuk2012](https://github.com/aliuk2012)
 * **3.8.1** - Fixed Gemnasium badge.
 * **3.8.0** - Add support for AR 5.0.1
