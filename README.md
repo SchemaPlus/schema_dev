@@ -133,10 +133,11 @@ The client gem's `Rakefile` includes:
 
 Which defines the rake task `create_databases` and also a task for travis-ci
 
-## History
+## Relase Notes
 
 Release notes for schema_dev versions:
 
+* **3.9.0** - Add support for AR 5.0.2, 5.0.3, 5.1.0 and 5.1.1. Thanks to [@aliuk2012](https://github.com/aliuk2012)
 * **3.8.1** - Fixed Gemnasium badge.
 * **3.8.0** - Add support for AR 5.0.1
 * **3.7.1** - Properly constrain AR 5.0 gemfiles to AR ~> 5.0.0
