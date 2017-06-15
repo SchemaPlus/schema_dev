@@ -14,11 +14,11 @@ module SchemaDev
         RSpec.configure do |config|
           config.include Helpers
           config.filter_run_excluding :postgresql => :only unless Helpers.postgresql?
-          config.filter_run_excluding :postgresql => :skip if Helpers.postgresql?
-          config.filter_run_excluding :mysql => :only unless Helpers.mysql?
-          config.filter_run_excluding :mysql => :skip if Helpers.mysql?
-          config.filter_run_excluding :sqlite3 => :only unless Helpers.sqlite3?
-          config.filter_run_excluding :sqlite3 => :skip if Helpers.sqlite3?
+          config.filter_run_excluding :postgresql => :skip if     Helpers.postgresql?
+          config.filter_run_excluding :mysql      => :only unless Helpers.mysql?
+          config.filter_run_excluding :mysql      => :skip if     Helpers.mysql?
+          config.filter_run_excluding :sqlite3    => :only unless Helpers.sqlite3?
+          config.filter_run_excluding :sqlite3    => :skip if     Helpers.sqlite3?
         end
       end
 
@@ -39,31 +39,31 @@ module SchemaDev
         case @db
         when 'mysql'
           {
-            :adapter => 'mysql',
-            :database => database,
-            :username => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
-            :encoding => 'utf8',
-            :min_messages => 'warning'
+            "adapter"      => 'mysql',
+            "database"     => database,
+            "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            "encoding"     => 'utf8',
+            "min_messages" => 'warning'
           }
         when 'mysql2'
           {
-            :adapter => 'mysql2',
-            :database => database,
-            :username => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
-            :encoding => 'utf8',
-            :min_messages => 'warning'
+            "adapter"      => 'mysql2',
+            "database"     => database,
+            "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            "encoding"     => 'utf8',
+            "min_messages" => 'warning'
           }
         when 'postgresql'
           {
-            :adapter => 'postgresql',
-            :username => ENV['POSTGRESQL_DB_USER'],
-            :database => database,
-            :min_messages => 'warning'
+            "adapter"      => 'postgresql',
+            "username"     => ENV['POSTGRESQL_DB_USER'],
+            "database"     => database,
+            "min_messages" => 'warning'
           }
         when 'sqlite3'
           {
-            :adapter => 'sqlite3',
-            :database => tmproot.join("#{database}.sqlite3").to_s
+            "adapter"  => 'sqlite3',
+            "database" => tmproot.join("#{database}.sqlite3").to_s
           }
         else
           raise "Unknown db adapter #{@db.inspect}"
