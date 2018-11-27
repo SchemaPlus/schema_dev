@@ -137,6 +137,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **3.11.1** - Lock pg version for older AR versions
 * **3.11.0** - Add support for AR 5.2
 * **3.10.1** - Bug fix in rspec db connection; loosen dependency to 5.\*
 * **3.10.0** - Add support for 5.1 (i.e. 5.1.\*) and lock down dependencies on *.*
