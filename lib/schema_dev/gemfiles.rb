@@ -1,4 +1,5 @@
 require 'pathname'
+require 'tmpdir'
 
 require_relative 'templates'
 
