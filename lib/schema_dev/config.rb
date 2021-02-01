@@ -12,7 +12,7 @@ module SchemaDev
 
   class Config
 
-    attr_accessor :quick, :db, :ruby, :activerecord, :notify, :exclude
+    attr_accessor :quick, :db, :dbversions, :ruby, :activerecord, :notify, :exclude
 
     def self._reset ; @@config = nil end  # for use by rspec
 
@@ -25,10 +25,11 @@ module SchemaDev
     end
 
     def initialize(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(ruby: :required, activerecord: :required, db: :required, exclude: nil, notify: nil, quick: nil)
+      opts = opts.keyword_args(ruby: :required, activerecord: :required, db: :required, dbversions: nil, exclude: nil, notify: nil, quick: nil)
       @ruby = Array.wrap(opts.ruby)
       @activerecord = Array.wrap(opts.activerecord)
       @db = Array.wrap(opts.db)
+      @dbversions = (opts.dbversions || {}).symbolize_keys
       @exclude = Array.wrap(opts.exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(tuple)}
       @notify = Array.wrap(opts.notify)
       @quick = Array.wrap(opts.quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
@@ -36,6 +37,10 @@ module SchemaDev
 
     def dbms
       @dbms ||= [:postgresql, :mysql].select{|dbm| @db.grep(/^#{dbm}/).any?}
+    end
+
+    def dbms_versions_for(db, default = [])
+      @dbversions.fetch(db, default)
     end
 
     def matrix(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args

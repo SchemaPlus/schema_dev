@@ -9,12 +9,63 @@ module SchemaDev
 
     TRAVIS_FILE = ".travis.yml"
 
+    CONFIG_TEMPLATES = {
+      postgresql: {
+        default: {
+          env: 'POSTGRESQL_DB_USER=postgres'
+        },
+        '10' => {
+          addons: { apt: { packages: %w[postgresql-10 postgresql-client-10] } },
+          env: 'POSTGRESQL_DB_USER=postgres'
+        },
+        '11' => {
+          addons: { apt: { packages: %w[postgresql-11 postgresql-client-11] } },
+          env: 'POSTGRESQL_DB_USER=travis PGPORT=5433'
+        },
+        '12' => {
+          addons: { apt: { packages: %w[postgresql-12 postgresql-client-12] } },
+          env: 'POSTGRESQL_DB_USER=travis PGPORT=5433'
+        },
+      }
+    }.freeze
+
+    def template_for_db(db, version)
+      {
+        addons: {
+          db => version
+        }
+      }.deep_merge(CONFIG_TEMPLATES[db][version] || CONFIG_TEMPLATES[db][:default])
+       .deep_stringify_keys
+    end
+
     def build(config)
       env = []
+      include = []
       addons = {}
       if config.dbms.include?(:postgresql)
-        env << 'POSTGRESQL_DB_USER=postgres'
-        addons['postgresql'] = "9.4"
+        versions = config.dbms_versions_for(:postgresql, ['9.4'])
+        if config.dbms.count == 1
+          if versions.count == 1
+            # only PG and only 1 DB do it globally
+            template = template_for_db(:postgresql, versions.first)
+            env << template['env']
+            addons.merge(template['addons'])
+          else
+            # we only have one DB so we can greatly simplify our include matrix
+            include.concat versions.map {|version|
+              {}.merge(template_for_db(:postgresql, version))
+            }
+          end
+        else
+          # we need to include against the various gemfiles so we only use PG for PG tests (and not other DBs)
+          config.matrix(db: 'postgresql', ruby: 'ignore').map { |entry|
+            include.concat versions.map {|version|
+              {
+                "gemfile" => GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s,
+              }.merge(template_for_db(:postgresql, version))
+            }
+          }
+        end
       end
       if config.dbms.include?(:mysql)
         env << 'MYSQL_DB_USER=travis'
@@ -26,11 +77,9 @@ module SchemaDev
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
         ex["gemfile"] = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
-        ex["env"] = env unless env.empty?
       }}.reject{|ex| not gemfiles.include? ex["gemfile"]}
 
       {}.tap { |travis|
-        travis["sudo"] = false
         travis["rvm"] = config.ruby.sort
         travis["gemfile"] = gemfiles.sort
         travis["env"] = env unless env.empty?
@@ -41,7 +90,12 @@ module SchemaDev
         end
         travis["script"] = "bundle exec rake travis"
         travis["notifications"] = { "email" => config.notify } if config.notify.any?
-        travis["matrix"] = { "exclude" => exclude.sort_by{|ex| [ex["rvm"], ex["gemfile"]]} } if exclude.any?
+        travis["jobs"] = {}
+        travis["jobs"]["exclude"] = exclude.sort_by{|ex| [ex["rvm"], ex["gemfile"]]} if exclude.any?
+        if include.any?
+          travis["jobs"]["include"] = include.sort_by{|ex| [ex["rvm"], ex["gemfile"]]}
+        end
+        travis.delete("jobs") if travis["jobs"].empty?
       }
     end
 
