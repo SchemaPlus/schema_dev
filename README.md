@@ -137,7 +137,8 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
-* **3.12.0** - support testing against multiple posrgresql versions
+* **3.12.1** - fix simple case when only one postgresql version
+* **3.12.0** - support testing against multiple postgresql versions
 * **3.11.2** - require tmpdir for access to mktmpdir
 * **3.11.1** - Lock pg version for older AR versions
 * **3.11.0** - Add support for AR 5.2
