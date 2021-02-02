@@ -49,7 +49,7 @@ module SchemaDev
             # only PG and only 1 DB do it globally
             template = template_for_db(:postgresql, versions.first)
             env << template['env']
-            addons.merge(template['addons'])
+            addons.merge!(template['addons'])
           else
             # we only have one DB so we can greatly simplify our include matrix
             include.concat versions.map {|version|
