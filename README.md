@@ -59,7 +59,7 @@ In the root directory, you can run, e.g.,
 
 Which will run those commands over the whole matrix.  You can also specify slices, via any combination of `--ruby`, `--activerecord` and `--db`
 
-    $ schema_dev rspec --ruby 2.1.3 --activerecord 4.0
+    $ schema_dev rspec --ruby 2.7.4 --activerecord 5.2
 
 For convenience you can also use `--quick` to run just one as specified in `schema_dev.yml`
 
@@ -71,7 +71,7 @@ For interactive debugging you may want to run rspec directly from the shell rath
 
 	$ schema_dev rspec --quick -- -e 'select which spec' -n
 
-	*** ruby 2.1.5 - activerecord 4.2 - db postgresql [1 of 1]
+	*** ruby 2.7.3 - activerecord 5.2 - db postgresql [1 of 1]
 
 	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
 
@@ -137,6 +137,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **3.13.0** - Change coveralls gem and test against newer ruby versions
 * **3.12.1** - fix simple case when only one postgresql version
 * **3.12.0** - support testing against multiple postgresql versions
 * **3.11.2** - require tmpdir for access to mktmpdir
@@ -152,4 +153,3 @@ Release notes for schema_dev versions:
 * **3.6.2** - Fix README template error introduced in 3.6.0
 * **3.6.1** - Further fix mysql2 dependencies.
 * **3.6.0** - Add support for AR 4.2.6; fix mysql2 dependencies; internal improvements and bug fixes.  Thanks to [@dmeranda](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Admeranda) and [@dholdren](https://github.com/SchemaPlus/schema_dev/issues?q=is%3Apr+is%3Aopen+author%3Adholdren)
-
