@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency "activesupport", "~> 5.0"
-  gem.add_dependency "coveralls", "~> 0.8"
+  gem.add_dependency "coveralls_reborn", "~> 0.23"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "fastandand", "~> 1.0"
   gem.add_dependency "hash_keyword_args", "~> 0.1"
@@ -32,6 +32,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 10.0"
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "rspec-given", "~> 3.8"
-  gem.add_development_dependency "simplecov", "~> 0.12"
+  gem.add_development_dependency "simplecov"
   gem.add_development_dependency "webmock", "~> 2.1"
 end
