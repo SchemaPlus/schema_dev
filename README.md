@@ -71,14 +71,14 @@ For interactive debugging you may want to run rspec directly from the shell rath
 
 	$ schema_dev rspec --quick -- -e 'select which spec' -n
 
-	*** ruby 2.7.3 - activerecord 5.2 - db postgresql [1 of 1]
+	*** ruby 2.7.4 - activerecord 5.2 - db postgresql [1 of 1]
 
-	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+	* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.7.4 -- bundle exec rspec -e select\ which\ spec
 
 
 There's no hidden environment setup; so you can copy and paste the command line into a shell:
 
-	$ /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.1.5 -- bundle exec rspec -e select\ which\ spec
+	$ /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-4.2/Gemfile.postgresql SHELL=`which bash` chruby-exec ruby-2.7.4 -- bundle exec rspec -e select\ which\ spec
 
 	
 For more info, see
