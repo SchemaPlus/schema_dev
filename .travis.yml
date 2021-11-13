@@ -1,2 +1,4 @@
-rvm: 2.3.1
+rvm:
+- 2.5.9
+- 2.7.4
 script: bundle exec rake travis
