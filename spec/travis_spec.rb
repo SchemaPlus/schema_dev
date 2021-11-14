@@ -5,8 +5,11 @@ describe SchemaDev::Travis do
   it "creates travis file" do
     config = get_config(ruby: %W[1.9.3 2.1.5],
                         activerecord: %W[4.0 4.1],
-                        db: %W[mysql2 postgresql],
-                        exclude: { ruby: "1.9.3", db: "postgresql" },
+                        db: %W[mysql2 postgresql sqlite3],
+                        exclude: [
+                                { ruby: "1.9.3", db: "postgresql" },
+                                { ruby: "1.9.3", db: "sqlite3" },
+                              ],
                         notify: 'me@example.com')
     in_tmpdir do
       SchemaDev::Travis.update(config)
@@ -20,11 +23,8 @@ rvm:
 - 1.9.3
 - 2.1.5
 gemfile:
-- gemfiles/activerecord-4.0/Gemfile.mysql2
-- gemfiles/activerecord-4.0/Gemfile.postgresql
-- gemfiles/activerecord-4.1/Gemfile.mysql2
-- gemfiles/activerecord-4.1/Gemfile.postgresql
-env: MYSQL_DB_USER=travis
+- gemfiles/activerecord-4.0/Gemfile.sqlite3
+- gemfiles/activerecord-4.1/Gemfile.sqlite3
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
@@ -34,17 +34,39 @@ notifications:
 jobs:
   exclude:
   - rvm: 1.9.3
-    gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    gemfile: gemfiles/activerecord-4.0/Gemfile.sqlite3
   - rvm: 1.9.3
-    gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    gemfile: gemfiles/activerecord-4.1/Gemfile.sqlite3
   include:
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.mysql2
+    rvm: 1.9.3
+    services:
+    - mysql
+    env: MYSQL_DB_USER=travis
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.mysql2
+    rvm: 1.9.3
+    services:
+    - mysql
+    env: MYSQL_DB_USER=travis
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.mysql2
+    rvm: 2.1.5
+    services:
+    - mysql
+    env: MYSQL_DB_USER=travis
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
-      postgresql: '9.4'
+      postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.mysql2
+    rvm: 2.1.5
+    services:
+    - mysql
+    env: MYSQL_DB_USER=travis
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
-      postgresql: '9.4'
+      postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
 ENDTRAVIS
     end
@@ -69,7 +91,7 @@ gemfile:
 - gemfiles/activerecord-4.1/Gemfile.postgresql
 env: POSTGRESQL_DB_USER=postgres
 addons:
-  postgresql: '9.4'
+  postgresql: '9.6'
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
@@ -82,7 +104,7 @@ ENDTRAVIS
     it "creates travis file using that as the PG version" do
       config = get_config(ruby: %W[2.4.0],
                           activerecord: %W[4.1],
-                          db: %W[mysql2 postgresql],
+                          db: %W[postgresql sqlite3],
                           dbversions: {postgresql: %W[9.6]})
       in_tmpdir do
         SchemaDev::Travis.update(config)
@@ -95,15 +117,14 @@ ENDTRAVIS
 rvm:
 - 2.4.0
 gemfile:
-- gemfiles/activerecord-4.1/Gemfile.mysql2
-- gemfiles/activerecord-4.1/Gemfile.postgresql
-env: MYSQL_DB_USER=travis
+- gemfiles/activerecord-4.1/Gemfile.sqlite3
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
 jobs:
   include:
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
     addons:
       postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
@@ -116,7 +137,7 @@ ENDTRAVIS
     it "creates travis file including those variants for postgresql versions" do
       config = get_config(ruby: %W[1.9.3 2.1.5 2.4.0],
                           activerecord: %W[4.0 4.1],
-                          db: %W[mysql2 postgresql],
+                          db: %W[sqlite3 postgresql],
                           dbversions: {postgresql: %W[9.6 10 11]},
                           exclude: [{ ruby: "1.9.3", db: "postgresql" }])
       in_tmpdir do
@@ -132,26 +153,20 @@ rvm:
 - 2.1.5
 - 2.4.0
 gemfile:
-- gemfiles/activerecord-4.0/Gemfile.mysql2
-- gemfiles/activerecord-4.0/Gemfile.postgresql
-- gemfiles/activerecord-4.1/Gemfile.mysql2
-- gemfiles/activerecord-4.1/Gemfile.postgresql
-env: MYSQL_DB_USER=travis
+- gemfiles/activerecord-4.0/Gemfile.sqlite3
+- gemfiles/activerecord-4.1/Gemfile.sqlite3
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
 jobs:
-  exclude:
-  - rvm: 1.9.3
-    gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
-  - rvm: 1.9.3
-    gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
   include:
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '10'
       apt:
@@ -160,6 +175,7 @@ jobs:
         - postgresql-client-10
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '11'
       apt:
@@ -168,10 +184,12 @@ jobs:
         - postgresql-client-11
     env: POSTGRESQL_DB_USER=travis PGPORT=5433
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '10'
       apt:
@@ -180,6 +198,53 @@ jobs:
         - postgresql-client-10
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
+    addons:
+      postgresql: '11'
+      apt:
+        packages:
+        - postgresql-11
+        - postgresql-client-11
+    env: POSTGRESQL_DB_USER=travis PGPORT=5433
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '9.6'
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '10'
+      apt:
+        packages:
+        - postgresql-10
+        - postgresql-client-10
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '11'
+      apt:
+        packages:
+        - postgresql-11
+        - postgresql-client-11
+    env: POSTGRESQL_DB_USER=travis PGPORT=5433
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '9.6'
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '10'
+      apt:
+        packages:
+        - postgresql-10
+        - postgresql-client-10
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
     addons:
       postgresql: '11'
       apt:
@@ -243,7 +308,7 @@ ENDTRAVIS
     it "creates travis file including those variants for postgresql versions" do
       config = get_config(ruby: %W[2.1.5 2.4.0],
                           activerecord: %W[4.0 4.1],
-                          db: %W[mysql2 postgresql],
+                          db: %W[sqlite3 postgresql],
                           dbversions: {postgresql: %W[9.6 10]})
       in_tmpdir do
         SchemaDev::Travis.update(config)
@@ -257,21 +322,20 @@ rvm:
 - 2.1.5
 - 2.4.0
 gemfile:
-- gemfiles/activerecord-4.0/Gemfile.mysql2
-- gemfiles/activerecord-4.0/Gemfile.postgresql
-- gemfiles/activerecord-4.1/Gemfile.mysql2
-- gemfiles/activerecord-4.1/Gemfile.postgresql
-env: MYSQL_DB_USER=travis
+- gemfiles/activerecord-4.0/Gemfile.sqlite3
+- gemfiles/activerecord-4.1/Gemfile.sqlite3
 before_script: bundle exec rake create_databases
 after_script: bundle exec rake drop_databases
 script: bundle exec rake travis
 jobs:
   include:
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '10'
       apt:
@@ -280,10 +344,40 @@ jobs:
         - postgresql-client-10
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
     addons:
       postgresql: '9.6'
     env: POSTGRESQL_DB_USER=postgres
   - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.1.5
+    addons:
+      postgresql: '10'
+      apt:
+        packages:
+        - postgresql-10
+        - postgresql-client-10
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '9.6'
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.0/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '10'
+      apt:
+        packages:
+        - postgresql-10
+        - postgresql-client-10
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
+    addons:
+      postgresql: '9.6'
+    env: POSTGRESQL_DB_USER=postgres
+  - gemfile: gemfiles/activerecord-4.1/Gemfile.postgresql
+    rvm: 2.4.0
     addons:
       postgresql: '10'
       apt:

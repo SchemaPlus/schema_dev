@@ -42,9 +42,11 @@ module SchemaDev
       env = []
       include = []
       addons = {}
+      services = []
+      skip_gemfiles = []
       if config.dbms.include?(:postgresql)
-        versions = config.dbms_versions_for(:postgresql, ['9.4'])
-        if config.dbms.count == 1
+        versions = config.dbms_versions_for(:postgresql, ['9.6'])
+        if config.db.count == 1
           if versions.count == 1
             # only PG and only 1 DB do it globally
             template = template_for_db(:postgresql, versions.first)
@@ -58,21 +60,39 @@ module SchemaDev
           end
         else
           # we need to include against the various gemfiles so we only use PG for PG tests (and not other DBs)
-          config.matrix(db: 'postgresql', ruby: 'ignore').map { |entry|
+          config.matrix(db: 'postgresql').map { |entry|
+            gemfile = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
+            skip_gemfiles << gemfile
             include.concat versions.map {|version|
               {
-                "gemfile" => GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s,
+                "gemfile" => gemfile,
+                "rvm" => entry[:ruby],
               }.merge(template_for_db(:postgresql, version))
             }
           }
         end
       end
       if config.dbms.include?(:mysql)
-        env << 'MYSQL_DB_USER=travis'
+        if config.db.count == 1
+          env << 'MYSQL_DB_USER=travis'
+          services << 'mysql'
+        else
+          config.matrix(db: 'mysql2').map do |entry|
+            gemfile = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
+            skip_gemfiles << gemfile
+            include << {
+              "gemfile" => gemfile,
+              "rvm" => entry[:ruby],
+              "services" => ['mysql'],
+              "env" => 'MYSQL_DB_USER=travis',
+            }
+          end
+        end
       end
       env = env.join(' ')
 
       gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s}.uniq
+      gemfiles.reject! { |gemfile| skip_gemfiles.include?(gemfile) }
 
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
@@ -81,9 +101,10 @@ module SchemaDev
 
       {}.tap { |travis|
         travis["rvm"] = config.ruby.sort
-        travis["gemfile"] = gemfiles.sort
+        travis["gemfile"] = gemfiles.sort unless gemfiles.empty?
         travis["env"] = env unless env.empty?
         travis["addons"] = addons unless addons.empty?
+        travis["services"] = services unless services.empty?
         if config.dbms.any?
           travis["before_script"] = 'bundle exec rake create_databases'
           travis["after_script"] = 'bundle exec rake drop_databases'
@@ -93,7 +114,7 @@ module SchemaDev
         travis["jobs"] = {}
         travis["jobs"]["exclude"] = exclude.sort_by{|ex| [ex["rvm"], ex["gemfile"]]} if exclude.any?
         if include.any?
-          travis["jobs"]["include"] = include.sort_by{|ex| [ex["rvm"], ex["gemfile"]]}
+          travis["jobs"]["include"] = include.sort_by{|ex| [ex.fetch('rvm', ''), ex.fetch('gemfile', '')]}
         end
         travis.delete("jobs") if travis["jobs"].empty?
       }
