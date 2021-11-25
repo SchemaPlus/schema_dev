@@ -26,6 +26,14 @@ module SchemaDev
           addons: { apt: { packages: %w[postgresql-12 postgresql-client-12] } },
           env: 'POSTGRESQL_DB_USER=travis PGPORT=5433'
         },
+        '13' => {
+          addons: { apt: { packages: %w[postgresql-13 postgresql-client-13] } },
+          env: 'POSTGRESQL_DB_USER=travis PGPORT=5433'
+        },
+        '14' => {
+          addons: { apt: { packages: %w[postgresql-14 postgresql-client-14] } },
+          env: 'POSTGRESQL_DB_USER=travis PGPORT=5433'
+        },
       }
     }.freeze
 
