@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 2.5.0"
 
-  gem.add_dependency "activesupport", "~> 5.0"
+  gem.add_dependency "activesupport", ">= 5.2", "< 6.2"
   gem.add_dependency "coveralls_reborn", "~> 0.23"
   gem.add_dependency "faraday", "~> 0.9"
   gem.add_dependency "fastandand", "~> 1.0"
