@@ -1,6 +1,5 @@
 require 'active_support/core_ext/hash'
 require 'enumerator'
-require 'fastandand'
 require 'its-it'
 require 'key_struct'
 require 'pathname'
