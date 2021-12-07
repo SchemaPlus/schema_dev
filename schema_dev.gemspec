@@ -28,7 +28,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "which_works", "~> 1.0"
 
   gem.add_development_dependency "bundler"
-  gem.add_development_dependency "rake", "~> 10.0"
+  gem.add_development_dependency "rake", "~> 13.0"
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "rspec-given", "~> 3.8"
   gem.add_development_dependency "simplecov"
