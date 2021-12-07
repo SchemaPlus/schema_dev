@@ -137,6 +137,7 @@ Which defines the rake task `create_databases` and also a task for travis-ci
 
 Release notes for schema_dev versions:
 
+* **4.0.0** - Drop support for AR < 5.2 and add AR 6.0 and 6.1
 * **3.13.1** - Adjust travis.yml generation to work with mysql again
 * **3.13.0** - Change coveralls gem and test against newer ruby versions
 * **3.12.1** - fix simple case when only one postgresql version
