@@ -1,7 +1,6 @@
 require 'active_support/core_ext/hash'
 require 'enumerator'
 require 'its-it'
-require 'key_struct'
 require 'pathname'
 require 'yaml'
 
@@ -69,7 +68,7 @@ module SchemaDev
       end
     end
 
-    class Tuple < KeyStruct[:ruby, :activerecord, :db]
+    Tuple = Struct.new(:ruby, :activerecord, :db, keyword_init: true) do
       def match?(other)
         return false if self.ruby and other.ruby and self.ruby != other.ruby
         return false if self.activerecord and other.activerecord and self.activerecord != other.activerecord
@@ -82,7 +81,7 @@ module SchemaDev
       end
 
       def to_hash
-        super.reject{ |k, val| val.nil? }
+        to_h.compact
       end
     end
   end

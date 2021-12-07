@@ -24,7 +24,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "coveralls_reborn", "~> 0.23"
   gem.add_dependency "faraday", "~> 1.0"
   gem.add_dependency "its-it", "~> 1.3"
-  gem.add_dependency "key_struct", "~> 0.4"
   gem.add_dependency "thor", '>= 0.19', '< 2.0'
   gem.add_dependency "which_works", "~> 1.0"
 
