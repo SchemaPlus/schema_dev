@@ -1,6 +1,5 @@
 require 'active_support/core_ext/hash'
 require 'enumerator'
-require 'its-it'
 require 'pathname'
 require 'yaml'
 
@@ -58,7 +57,7 @@ module SchemaDev
 
       m = use_ruby.product(use_activerecord, use_db)
       m = m.map { |_ruby, _activerecord, _db| Tuple.new(ruby: _ruby, activerecord: _activerecord, db: _db) }.compact
-      m = m.reject(&it.match_any?(@exclude)) unless excluded == :none
+      m = m.reject { |r| r.match_any?(@exclude) } unless excluded == :none
       m = m.map(&:to_hash)
 
       if excluded == :only

@@ -21,11 +21,15 @@ module SchemaDev
       CORE_COMMAND = "chruby-exec"
 
       def initialize
-        @rubies = Pathname.new(ENV['HOME']).join(".rubies").entries().map(&its.basename.to_s)
+        @rubies = Pathname.new(ENV['HOME'])
+                          .join(".rubies")
+                          .entries()
+                          .map { |e| e.basename.to_s }
       end
       def command(ruby)
         bash = Which.which 'bash' || abort("no bash shell found")
-        ruby = @rubies.select(&it =~ /^(ruby-)?#{ruby}(-p.*)?$/).last || ruby
+        ruby = @rubies.select { |e| e =~ /^(ruby-)?#{ruby}(-p.*)?$/ }
+                      .last || ruby
         "SHELL=#{bash} #{CORE_COMMAND} #{ruby} --"
       end
     end
