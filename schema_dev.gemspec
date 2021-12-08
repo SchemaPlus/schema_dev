@@ -21,8 +21,9 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.5.0"
 
   gem.add_dependency "activesupport", ">= 5.2", "< 6.2"
-  gem.add_dependency "coveralls_reborn", "~> 0.23"
   gem.add_dependency "faraday", "~> 1.0"
+  gem.add_dependency "simplecov"
+  gem.add_dependency 'simplecov-lcov', '~> 0.8.0'
   gem.add_dependency "thor", '>= 0.19', '< 2.0'
   gem.add_dependency "which_works", "~> 1.0"
 
@@ -30,6 +31,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake", "~> 13.0"
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "rspec-given", "~> 3.8"
-  gem.add_development_dependency "simplecov"
   gem.add_development_dependency "webmock", "~> 3.0"
 end
