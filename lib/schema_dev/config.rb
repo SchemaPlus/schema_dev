@@ -13,7 +13,7 @@ module SchemaDev
     def self._reset ; @@config = nil end  # for use by rspec
 
     def self.read
-      new((YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
+      new(**(YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
     end
 
     def self.load
@@ -25,7 +25,7 @@ module SchemaDev
       @activerecord = Array.wrap(activerecord)
       @db = Array.wrap(db)
       @dbversions = (dbversions || {}).symbolize_keys
-      @exclude = Array.wrap(exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(tuple)}
+      @exclude = Array.wrap(exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(**tuple)}
       @notify = Array.wrap(notify)
       @quick = Array.wrap(quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
     end
