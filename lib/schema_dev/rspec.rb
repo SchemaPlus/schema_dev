@@ -7,8 +7,8 @@ module SchemaDev
       Db.setup
     end
 
-    def self.db_configuration
-      Db.configuration
+    def self.db_configuration(db: nil)
+      Db.configuration(db: db)
     end
 
     module Helpers

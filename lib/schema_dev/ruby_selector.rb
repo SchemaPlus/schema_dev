@@ -4,11 +4,11 @@ require 'which_works'
 module SchemaDev
   module RubySelector
     def self.command(ruby)
-      @@selector ||= [Chruby, Rvm, Rbenv].find(&:installed?)&.new || abort("No ruby version manager found")
-      @@selector.command ruby
+      @selector ||= [Chruby, Rvm, Rbenv].find(&:installed?)&.new || abort("No ruby version manager found")
+      @selector.command ruby
     end
     def self._reset # for rspec, to avoid stickiness
-      @@selector = nil
+      @selector = nil
     end
 
     class ManagerBase

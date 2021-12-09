@@ -24,7 +24,7 @@ class CLI < Thor
     method_option :db, type: :string, desc: "Only execute for the specified database"
   end
 
-  desc "freshen", "update files that depend on schema_dev.yml: .travis, gemfiles/, README.md"
+  desc "freshen", "update files that depend on schema_dev.yml: .github/worksflows/prs.yml, gemfiles/, README.md"
   def freshen
       runner.freshen
   end

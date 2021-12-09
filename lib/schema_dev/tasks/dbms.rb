@@ -1,37 +1,45 @@
 require 'schema_dev/config'
+require 'schema_dev/rspec'
 
-dbms = SchemaDev::Config.load.dbms
-
-DATABASES = %w[schema_plus_test]
+dbms = SchemaDev::Config.load.db
 
 if dbms.any?
-  {
-    postgresql: { uservar: 'POSTGRESQL_DB_USER', defaultuser: 'schema_plus', create: "createdb -U '%{user}' %{dbname}", drop: "dropdb -U '%{user}' %{dbname}" },
-    mysql:      { uservar: 'MYSQL_DB_USER', defaultuser: 'schema_plus', create: "mysqladmin -u '%{user}' create %{dbname}", drop: "mysqladmin -u '%{user}' -f drop %{dbname}" }
-  }.slice(*dbms).each do |dbm, info|
+  (%w[postgresql, mysql2] & dbms).each do |dbm, info|
     namespace dbm do
-      user = ENV.fetch info[:uservar], info[:defaultuser]
-      task :create_databases do
-        DATABASES.each do |dbname|
-          system(info[:create] % {user: user, dbname: dbname})
-        end
+      task :create_database do
+        require 'active_record'
+
+        config = SchemaDev::Rspec.db_configuration(dbm)
+
+        ActiveRecord::Tasks::DatabaseTasks.create(config)
       end
       task :drop_databases do
-        DATABASES.each do |dbname|
-          system(info[:drop] % {user: user, dbname: dbname})
-        end
+        require 'active_record'
+
+        config = SchemaDev::Rspec.db_configuration(dbm)
+
+        ActiveRecord::Tasks::DatabaseTasks.drop(config)
       end
     end
   end
 
+  desc 'Create database for CI run'
+  task :create_ci_database do
+    require 'active_record'
+
+    config = SchemaDev::Rspec.db_configuration
+
+    ActiveRecord::Tasks::DatabaseTasks.create(config) unless config['adapter'] == 'sqlite3'
+  end
+
   desc 'Create test databases'
   task :create_databases do
-    invoke_multiple(dbms, "create_databases")
+    invoke_multiple(dbms, "create_database")
   end
 
   desc 'Drop test databases'
   task :drop_databases do
-    invoke_multiple(dbms, "drop_databases")
+    invoke_multiple(dbms, "drop_database")
   end
 
   def invoke_multiple(namespaces, task)

@@ -127,6 +127,7 @@ module SchemaDev
 
     def rename_files
       (gem_root + "gitignore").rename gem_root + ".gitignore"
+      (gem_root + "simplecov").rename gem_root + ".simplecov"
       Dir.glob(gem_root + "**/*GEM_NAME*").each do |path|
         FileUtils.mv path, path.gsub(/GEM_NAME/, gem_name)
       end

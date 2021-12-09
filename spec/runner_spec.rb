@@ -5,7 +5,7 @@ require 'pathname'
 describe SchemaDev::Runner do
 
   it "creates gemfiles" do
-    config = get_config(ruby: "2.1.3", activerecord: "5.2", db: "sqlite3")
+    config = get_config(ruby: "2.5", activerecord: "6.0", db: "sqlite3")
     runner = SchemaDev::Runner.new(config)
     in_tmpdir do
       expect{ runner.gemfiles }.to output("* Updated gemfiles\n").to_stdout
@@ -13,12 +13,12 @@ describe SchemaDev::Runner do
     end
   end
 
-  it "creates travis" do
-    config = get_config(ruby: "2.1.3", activerecord: "5.2", db: "sqlite3")
+  it "creates github actions" do
+    config = get_config(ruby: "2.5", activerecord: "6.0", db: "sqlite3")
     runner = SchemaDev::Runner.new(config)
     in_tmpdir do
-      expect{ runner.travis }.to output("* Updated .travis.yml\n").to_stdout
-      expect(Pathname.new(".travis.yml")).to be_file
+      expect{ runner.github_actions }.to output("* Updated " + SchemaDev::GithubActions::WORKFLOW_FILE + "\n").to_stdout
+      expect(Pathname.new(SchemaDev::GithubActions::WORKFLOW_FILE)).to be_file
     end
   end
 
@@ -54,23 +54,23 @@ describe SchemaDev::Runner do
         }
       end
 
-      let(:config) { get_config(ruby: RUBY_VERSION, activerecord: "5.2", db: %W[sqlite3 postgresql]) }
+      let(:config) { get_config(ruby: RUBY_VERSION, activerecord: "6.0", db: %W[sqlite3 postgresql]) }
       let(:runner) { SchemaDev::Runner.new(config) }
 
 
       let(:expected_output) { <<ENDOUTPUT.strip }
-* Updated .travis.yml
+* Updated #{SchemaDev::GithubActions::WORKFLOW_FILE}
 * Updated gemfiles
 
 
-*** ruby #{RUBY_VERSION} - activerecord 5.2 - db sqlite3 [1 of 2]
+*** ruby #{RUBY_VERSION} - activerecord 6.0 - db sqlite3 [1 of 2]
 
-* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-5.2/Gemfile.sqlite3 #{selection_command} %{cmd}
+* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-6.0/Gemfile.sqlite3 #{selection_command} %{cmd}
 %{output}
 
-*** ruby #{RUBY_VERSION} - activerecord 5.2 - db postgresql [2 of 2]
+*** ruby #{RUBY_VERSION} - activerecord 6.0 - db postgresql [2 of 2]
 
-* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-5.2/Gemfile.postgresql #{selection_command} %{cmd}
+* /usr/bin/env BUNDLE_GEMFILE=gemfiles/activerecord-6.0/Gemfile.postgresql #{selection_command} %{cmd}
 %{output}
 ENDOUTPUT
 
@@ -85,8 +85,8 @@ ENDOUTPUT
           expect{ runner.run("false") }.to output(expected_output % {cmd: 'false', output: nil} + <<-ENDERR).to_stdout
 
 *** 2 failures:
-\truby #{RUBY_VERSION} - activerecord 5.2 - db sqlite3
-\truby #{RUBY_VERSION} - activerecord 5.2 - db postgresql
+\truby #{RUBY_VERSION} - activerecord 6.0 - db sqlite3
+\truby #{RUBY_VERSION} - activerecord 6.0 - db postgresql
           ENDERR
         end
       end
@@ -96,8 +96,8 @@ ENDOUTPUT
           expect{ runner.run("echo", "LoadError") }.to output(expected_output % {cmd: 'echo LoadError', output: "LoadError\n"} + <<-ENDERR).to_stdout
 
 *** 2 failures:
-\truby #{RUBY_VERSION} - activerecord 5.2 - db sqlite3
-\truby #{RUBY_VERSION} - activerecord 5.2 - db postgresql
+\truby #{RUBY_VERSION} - activerecord 6.0 - db sqlite3
+\truby #{RUBY_VERSION} - activerecord 6.0 - db postgresql
           ENDERR
         end
       end
