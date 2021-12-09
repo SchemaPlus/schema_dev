@@ -1,7 +1,7 @@
 require 'shellwords'
 
 require_relative 'matrix_executor'
-require_relative 'travis'
+require_relative 'github_actions'
 require_relative 'gemfiles'
 require_relative 'readme'
 
@@ -11,9 +11,9 @@ module SchemaDev
       @config = config
     end
 
-    def travis(quiet: false)
-      if Travis.update(@config)
-        puts "* Updated #{Travis::TRAVIS_FILE}" unless quiet
+    def github_actions(quiet: false)
+      if GithubActions.update(@config)
+        puts "* Updated #{GithubActions::WORKFLOW_FILE}" unless quiet
       end
     end
 
@@ -30,7 +30,7 @@ module SchemaDev
     end
 
     def freshen(quiet: false)
-      self.travis(quiet: quiet)
+      self.github_actions(quiet: quiet)
       self.gemfiles(quiet: quiet)
       self.readme(quiet: quiet)
     end

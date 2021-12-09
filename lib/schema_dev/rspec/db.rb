@@ -8,7 +8,6 @@ module SchemaDev
       extend self
 
       def setup
-        @db = GemfileSelector.infer_db
         set_logger
         connect
         RSpec.configure do |config|
@@ -35,13 +34,15 @@ module SchemaDev
         # @database ||= (Dir["*.gemspec"].first || "schema_dev_test").sub(/\.gemspec$/, '') + "_test"
       end
 
-      def configuration
-        case @db
+      def configuration(db: nil)
+        case db || infer_db
         when 'mysql'
           {
             "adapter"      => 'mysql',
             "database"     => database,
+            "host"         => ENV['MYSQL_DB_HOST'],
             "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            "password"     => ENV['MYSQL_DB_PASS'],
             "encoding"     => 'utf8',
             "min_messages" => 'warning'
           }
@@ -49,15 +50,19 @@ module SchemaDev
           {
             "adapter"      => 'mysql2',
             "database"     => database,
+            "host"         => ENV['MYSQL_DB_HOST'],
             "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            "password"     => ENV['MYSQL_DB_PASS'],
             "encoding"     => 'utf8',
             "min_messages" => 'warning'
           }
         when 'postgresql'
           {
             "adapter"      => 'postgresql',
-            "username"     => ENV['POSTGRESQL_DB_USER'],
             "database"     => database,
+            "host"         => ENV['POSTGRESQL_DB_HOST'],
+            "username"     => ENV['POSTGRESQL_DB_USER'],
+            "password"     => ENV['POSTGRESQL_DB_PASS'],
             "min_messages" => 'warning'
           }
         when 'sqlite3'
@@ -66,14 +71,18 @@ module SchemaDev
             "database" => tmproot.join("#{database}.sqlite3").to_s
           }
         else
-          raise "Unknown db adapter #{@db.inspect}"
-        end
+          raise "Unknown db adapter #{db.inspect}"
+        end.compact
+      end
+
+      def infer_db
+        @infer_db ||= GemfileSelector.infer_db
       end
 
       def connect
         ActiveRecord::Base.configurations = { 'schema_dev' => configuration }
         ActiveRecord::Base.establish_connection :schema_dev
-        case @db
+        case infer_db
         when 'sqlite3'
           ActiveRecord::Base.connection.execute "PRAGMA synchronous = OFF"
         end
@@ -82,7 +91,7 @@ module SchemaDev
       def set_logger
         ruby = "#{RUBY_ENGINE}#{RUBY_VERSION}"
         activerecord = "activerecord#{ActiveRecord.version}"
-        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}-#{activerecord}-#{@db}.log").open("w"))
+        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}-#{activerecord}-#{infer_db}.log").open("w"))
       end
 
       module Helpers

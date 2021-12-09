@@ -1,13 +1,12 @@
 # SchemaDev
 
 [![Gem Version](https://badge.fury.io/rb/schema_dev.svg)](http://badge.fury.io/rb/schema_dev)
-[![Build Status](https://secure.travis-ci.org/SchemaPlus/schema_dev.svg)](http://travis-ci.org/SchemaPlus/schema_dev)
+[![Build Status](https://github.com/SchemaPlus/schema_dev/actions/workflows/prs.yml/badge.svg)](https://github.com/SchemaPlus/schema_dev/actions)
 [![Coverage Status](https://img.shields.io/coveralls/SchemaPlus/schema_dev.svg)](https://coveralls.io/r/SchemaPlus/schema_dev)
-[![Dependency Status](https://gemnasium.com/SchemaPlus/schema_dev.svg)](https://gemnasium.com/SchemaPlus/schema_dev)
 
 Development tools for the SchemaPlus family of gems.
 
-Provides support for working with multiple ruby versions, ActiveRecord, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.travis.yml` file for [travis-ci](https://travis-ci.org) testing.
+Provides support for working with multiple ruby versions, ActiveRecord, and db versions.  In particular provides a command `schema_dev` for running rspec (or whatever) on the matrix or  a slice or element of it.  It also auto-generates the `.github/workflows/prs.yml` file for [github actions](https://docs.github.com/en/actions) testing.
 
 ## Creating a new gem for the SchemaPlus family
 
@@ -99,9 +98,9 @@ Note that freshening the gemfiles happens automatically whenever you run a schem
 
 If you need to include extra specifications in the Gemfile (e.g. to specify a path for a gem), you can create a file `Gemfile.local` in the project root, and its contents will be included in the Gemfile.
 
-### .travis.yml
+### .github/workflows/prs.yml
 
-The `.travis.yml` file gets created automatically.  Don't edit it by hand.
+The `.github/workflows/prs.yml` file gets created automatically.  Don't edit it by hand.
 
 ### README.md
 
@@ -131,9 +130,9 @@ The client gem's `Rakefile` includes:
 
     require 'schema_dev/tasks'
 
-Which defines the rake task `create_databases` and also a task for travis-ci
+Which defines the rake task `create_databases` and also a task for github actions
 
-## Relase Notes
+## Release Notes
 
 Release notes for schema_dev versions:
 
