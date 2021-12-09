@@ -1,11 +1,7 @@
 require 'active_support/core_ext/hash'
 require 'enumerator'
-require 'fastandand'
-require 'its-it'
-require 'key_struct'
 require 'pathname'
 require 'yaml'
-require 'hash_keyword_args'
 
 module SchemaDev
   CONFIG_FILE = "schema_dev.yml"
@@ -17,22 +13,21 @@ module SchemaDev
     def self._reset ; @@config = nil end  # for use by rspec
 
     def self.read
-      new((YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
+      new(**(YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
     end
 
     def self.load
       @@config ||= read
     end
 
-    def initialize(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(ruby: :required, activerecord: :required, db: :required, dbversions: nil, exclude: nil, notify: nil, quick: nil)
-      @ruby = Array.wrap(opts.ruby)
-      @activerecord = Array.wrap(opts.activerecord)
-      @db = Array.wrap(opts.db)
-      @dbversions = (opts.dbversions || {}).symbolize_keys
-      @exclude = Array.wrap(opts.exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(tuple)}
-      @notify = Array.wrap(opts.notify)
-      @quick = Array.wrap(opts.quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
+    def initialize(ruby:, activerecord:, db:, dbversions: nil, exclude: nil, notify: nil, quick: nil)
+      @ruby = Array.wrap(ruby)
+      @activerecord = Array.wrap(activerecord)
+      @db = Array.wrap(db)
+      @dbversions = (dbversions || {}).symbolize_keys
+      @exclude = Array.wrap(exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(**tuple)}
+      @notify = Array.wrap(notify)
+      @quick = Array.wrap(quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
     end
 
     def dbms
@@ -43,19 +38,18 @@ module SchemaDev
       @dbversions.fetch(db, default)
     end
 
-    def matrix(opts={}) # once we no longer support ruby 1.9.3, can switch to native keyword args
-      opts = opts.keyword_args(quick: false, ruby: nil, activerecord: nil, db: nil, excluded: nil)
+    def matrix(quick: false, ruby: nil, activerecord: nil, db: nil, excluded: nil)
       use_ruby = @ruby
       use_activerecord = @activerecord
       use_db = @db
-      if opts.quick
+      if quick
         use_ruby = @quick.map{|q| q[:ruby]}
         use_activerecord = @quick.map{|q| q[:activerecord]}
         use_db = @quick.map{|q| q[:db]}
       end
-      use_ruby = Array.wrap(opts.ruby) if opts.ruby
-      use_activerecord = Array.wrap(opts.activerecord) if opts.activerecord
-      use_db = Array.wrap(opts.db) if opts.db
+      use_ruby = Array.wrap(ruby) if ruby
+      use_activerecord = Array.wrap(activerecord) if activerecord
+      use_db = Array.wrap(db) if db
 
       use_ruby = [nil] unless use_ruby.any?
       use_activerecord = [nil] unless use_activerecord.any?
@@ -63,17 +57,17 @@ module SchemaDev
 
       m = use_ruby.product(use_activerecord, use_db)
       m = m.map { |_ruby, _activerecord, _db| Tuple.new(ruby: _ruby, activerecord: _activerecord, db: _db) }.compact
-      m = m.reject(&it.match_any?(@exclude)) unless opts.excluded == :none
+      m = m.reject { |r| r.match_any?(@exclude) } unless excluded == :none
       m = m.map(&:to_hash)
 
-      if opts.excluded == :only
-        return matrix(opts.merge(excluded: :none)) - m
+      if excluded == :only
+        matrix(quick: quick, ruby: ruby, activerecord: activerecord, db: db, excluded: :none) - m
       else
-        return m
+        m
       end
     end
 
-    class Tuple < KeyStruct[:ruby, :activerecord, :db]
+    Tuple = Struct.new(:ruby, :activerecord, :db, keyword_init: true) do
       def match?(other)
         return false if self.ruby and other.ruby and self.ruby != other.ruby
         return false if self.activerecord and other.activerecord and self.activerecord != other.activerecord
@@ -86,9 +80,8 @@ module SchemaDev
       end
 
       def to_hash
-        super.reject{ |k, val| val.nil? }
+        to_h.compact
       end
     end
-
   end
 end

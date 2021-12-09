@@ -69,7 +69,7 @@ module SchemaDev
         else
           # we need to include against the various gemfiles so we only use PG for PG tests (and not other DBs)
           config.matrix(db: 'postgresql').map { |entry|
-            gemfile = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
+            gemfile = GemfileSelector.gemfile(**entry.slice(:activerecord, :db)).to_s
             skip_gemfiles << gemfile
             include.concat versions.map {|version|
               {
@@ -86,7 +86,7 @@ module SchemaDev
           services << 'mysql'
         else
           config.matrix(db: 'mysql2').map do |entry|
-            gemfile = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
+            gemfile = GemfileSelector.gemfile(**entry.slice(:activerecord, :db)).to_s
             skip_gemfiles << gemfile
             include << {
               "gemfile" => gemfile,
@@ -99,12 +99,12 @@ module SchemaDev
       end
       env = env.join(' ')
 
-      gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s}.uniq
+      gemfiles = config.matrix.map{|entry| GemfileSelector.gemfile(**entry.slice(:activerecord, :db)).to_s}.uniq
       gemfiles.reject! { |gemfile| skip_gemfiles.include?(gemfile) }
 
       exclude = config.matrix(excluded: :only).map { |entry| {}.tap {|ex|
         ex["rvm"] = entry[:ruby]
-        ex["gemfile"] = GemfileSelector.gemfile(entry.slice(:activerecord, :db)).to_s
+        ex["gemfile"] = GemfileSelector.gemfile(**entry.slice(:activerecord, :db)).to_s
       }}.reject{|ex| not gemfiles.include? ex["gemfile"]}
 
       {}.tap { |travis|

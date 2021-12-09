@@ -6,14 +6,12 @@ module SchemaDev
   module GemfileSelector
     extend self
 
-    def gemfile(opts = {})
-      opts = opts.keyword_args(activerecord: :required, db: :required)
-      Pathname.new(GEMFILES_DIR).join("activerecord-#{opts.activerecord}", "Gemfile.#{opts.db}")
+    def gemfile(activerecord:, db:)
+      Pathname.new(GEMFILES_DIR).join("activerecord-#{activerecord}", "Gemfile.#{db}")
     end
 
-    def command(opts={})
-      opts = opts.keyword_args(activerecord: :required, db: :required)
-      "BUNDLE_GEMFILE=#{gemfile(activerecord: opts.activerecord, db: opts.db)}"
+    def command(activerecord:, db:)
+      "BUNDLE_GEMFILE=#{gemfile(activerecord: activerecord, db: db)}"
     end
 
     def infer_db
