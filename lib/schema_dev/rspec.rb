@@ -7,11 +7,6 @@ module SchemaDev
       Db.setup
     end
 
-    def self.setup_db
-      ActiveSupport::Deprecation.warn "SchemaDev::Rspec.setup_db is deprecated.  Use SchemaDev::Rspec.setup"
-      self.setup
-    end
-
     def self.db_configuration
       Db.configuration
     end
