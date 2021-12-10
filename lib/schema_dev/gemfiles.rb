@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'tmpdir'
 
 require_relative 'templates'
 
 module SchemaDev
-
   module Gemfiles
     extend self
 
@@ -12,9 +13,9 @@ module SchemaDev
       Dir.mktmpdir do |tmpdir|
         @tmpdir = Pathname.new(tmpdir).realpath
 
-        gemfiles = Pathname("gemfiles")
+        gemfiles = Pathname('gemfiles')
         tmp_root = @tmpdir + gemfiles
-        target_root = Pathname.new(".").realpath + gemfiles
+        target_root = Pathname.new('.').realpath + gemfiles
 
         _install gemfiles + 'Gemfile.base'
 
@@ -22,11 +23,11 @@ module SchemaDev
           activerecord_path = gemfiles + "activerecord-#{activerecord}"
           _install activerecord_path + 'Gemfile.base'
           config.db.each do |db|
-            _install  activerecord_path + "Gemfile.#{db}"
+            _install activerecord_path + "Gemfile.#{db}"
           end
         end
 
-        if `diff -rq #{tmp_root} #{target_root} 2>&1 | grep -v lock`.length == 0
+        if `diff -rq #{tmp_root} #{target_root} 2>&1 | grep -v lock`.empty?
           return false
         end
 

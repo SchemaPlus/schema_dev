@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'simplecov'
 SimpleCov.start
 
@@ -8,11 +10,9 @@ require 'webmock/rspec'
 
 require 'schema_dev/config'
 
-def in_tmpdir
+def in_tmpdir(&block)
   Dir.mktmpdir do |dir|
-    Dir.chdir(dir) do
-      yield
-    end
+    Dir.chdir(dir, &block)
   end
 end
 
@@ -31,11 +31,10 @@ def suppress_stdout_stderr
   end
 end
 
-
 def get_config(data)
   SchemaDev::Config._reset
   in_tmpdir do
-    Pathname.new(SchemaDev::CONFIG_FILE).open("w") {|f| f.write data.to_yaml }
+    Pathname.new(SchemaDev::CONFIG_FILE).open('w') { |f| f.write data.to_yaml }
     SchemaDev::Config.load
   end
 end

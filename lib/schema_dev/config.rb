@@ -1,24 +1,27 @@
+# frozen_string_literal: true
+
 require 'active_support/core_ext/hash'
-require 'enumerator'
 require 'pathname'
 require 'yaml'
 require 'rubygems/version'
 
 module SchemaDev
-  CONFIG_FILE = "schema_dev.yml"
+  CONFIG_FILE = 'schema_dev.yml'
 
   class Config
-
     attr_accessor :quick, :db, :dbversions, :ruby, :activerecord, :exclude
 
-    def self._reset ; @config = nil end  # for use by rspec
+    # for use by rspec
+    def self._reset
+      @load = nil
+    end
 
     def self.read
-      new(**(YAML.load Pathname.new(CONFIG_FILE).read).symbolize_keys)
+      new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, [Symbol]).symbolize_keys)
     end
 
     def self.load
-      @config ||= read
+      @load ||= read
     end
 
     def initialize(ruby:, activerecord:, db:, dbversions: nil, exclude: nil, notify: nil, quick: nil)
@@ -26,7 +29,7 @@ module SchemaDev
       @activerecord = Array.wrap(activerecord).map(&:to_s)
       @db = Array.wrap(db)
       @dbversions = (dbversions || {}).symbolize_keys
-      @exclude = Array.wrap(exclude).map(&:symbolize_keys).map {|tuple| Tuple.new(**tuple.transform_values(&:to_s))}
+      @exclude = Array.wrap(exclude).map(&:symbolize_keys).map { |tuple| Tuple.new(**tuple.transform_values(&:to_s)) }
       if @activerecord.include?('5.2')
         ruby3 = ::Gem::Version.new('3.0')
 
@@ -35,18 +38,18 @@ module SchemaDev
         end
       end
       unless notify.nil?
-        warn "Notify is no longer supported"
+        warn 'Notify is no longer supported'
       end
-      @quick = Array.wrap(quick || {ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last})
+      @quick = Array.wrap(quick || { ruby: @ruby.last, activerecord: @activerecord.last, db: @db.last })
     end
 
     def dbms
-      @dbms ||= [:postgresql, :mysql].select{|dbm| @db.grep(/^#{dbm}/).any?}
+      @dbms ||= %i[postgresql mysql].select { |dbm| @db.grep(/^#{dbm}/).any? }
     end
 
     DB_VERSION_DEFAULTS = {
       postgresql: ['9.6']
-    }
+    }.freeze
 
     def db_versions_for(db)
       @dbversions.fetch(db.to_sym, DB_VERSION_DEFAULTS.fetch(db.to_sym, [])).map(&:to_s)
@@ -57,9 +60,9 @@ module SchemaDev
       use_activerecord = @activerecord
       use_db = @db
       if quick
-        use_ruby = @quick.map{|q| q[:ruby]}
-        use_activerecord = @quick.map{|q| q[:activerecord]}
-        use_db = @quick.map{|q| q[:db]}
+        use_ruby = @quick.map { |q| q[:ruby] }
+        use_activerecord = @quick.map { |q| q[:activerecord] }
+        use_db = @quick.map { |q| q[:db] }
       end
       use_ruby = Array.wrap(ruby) if ruby
       use_activerecord = Array.wrap(activerecord) if activerecord
@@ -70,13 +73,13 @@ module SchemaDev
       use_db = [nil] unless use_db.any?
 
       m = use_ruby.product(use_activerecord, use_db)
-      m = m.flat_map { |_ruby, _activerecord, _db|
-        if with_dbversion && !(dbversions = db_versions_for(_db)).empty?
-          dbversions.map { |v| Tuple.new(ruby: _ruby, activerecord: _activerecord, db: _db, dbversion: v) }
+      m = m.flat_map do |loop_ruby, loop_activerecord, loop_db|
+        if with_dbversion && !(dbversions = db_versions_for(loop_db)).empty?
+          dbversions.map { |v| Tuple.new(ruby: loop_ruby, activerecord: loop_activerecord, db: loop_db, dbversion: v) }
         else
-          [Tuple.new(ruby: _ruby, activerecord: _activerecord, db: _db)]
+          [Tuple.new(ruby: loop_ruby, activerecord: loop_activerecord, db: loop_db)]
         end
-      }.compact
+      end.compact
       m = m.reject { |r| r.match_any?(@exclude) } unless excluded == :none
       m = m.map(&:to_hash)
 
@@ -89,15 +92,16 @@ module SchemaDev
 
     Tuple = Struct.new(:ruby, :activerecord, :db, :dbversion, keyword_init: true) do
       def match?(other)
-        return false if self.ruby and other.ruby and self.ruby != other.ruby
-        return false if self.activerecord and other.activerecord and self.activerecord != other.activerecord
-        return false if self.db and other.db and self.db != other.db
-        return false if self.dbversion and other.dbversion and self.dbversion != other.dbversion
+        return false if ruby and other.ruby and ruby != other.ruby
+        return false if activerecord and other.activerecord and activerecord != other.activerecord
+        return false if db and other.db and db != other.db
+        return false if dbversion and other.dbversion and dbversion != other.dbversion
+
         true
       end
 
       def match_any?(others)
-        others.any?{|other| self.match? other}
+        others.any? { |other| match? other }
       end
 
       def to_hash

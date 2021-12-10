@@ -1,66 +1,70 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'active_support/core_ext/hash'
 require 'thor'
+require 'English'
 require_relative '../lib/schema_dev/config'
 require_relative '../lib/schema_dev/gem'
 require_relative '../lib/schema_dev/runner'
 require_relative '../lib/schema_dev/version'
 
 def runner
-    $config ||= SchemaDev::Config.load
-    $runner ||= SchemaDev::Runner.new($config)
+  config = SchemaDev::Config.load rescue nil
+  @runner ||= SchemaDev::Runner.new(config)
 end
 
-$cmd = File.basename $0
+def cmd
+  @cmd ||= File.basename $PROGRAM_NAME
+end
 
 class CLI < Thor
-
   def self.matrix_options
-    method_option :dry_run, aliases: "-n", type: :boolean, desc: "Show what the commands would be without running them"
-    method_option :quick, type: :boolean, desc: "Only execute on the 'quick' choice: #{$config ? $config.quick.inspect : "[from schema_dev.yml]"}"
-    method_option :ruby, type: :string, desc: "Only execute for the specified version of ruby"
-    method_option :activerecord, aliases: "--ar", type: :string, desc: "Only execute for the specified version of activerecord"
-    method_option :db, type: :string, desc: "Only execute for the specified database"
+    method_option :dry_run, aliases: '-n', type: :boolean, desc: 'Show what the commands would be without running them'
+    method_option :quick, type: :boolean, desc: "Only execute on the 'quick' choice: #{runner.config ? runner.config.quick.inspect : '[from schema_dev.yml]'}"
+    method_option :ruby, type: :string, desc: 'Only execute for the specified version of ruby'
+    method_option :activerecord, aliases: '--ar', type: :string, desc: 'Only execute for the specified version of activerecord'
+    method_option :db, type: :string, desc: 'Only execute for the specified database'
   end
 
-  desc "freshen", "update files that depend on schema_dev.yml: .github/worksflows/prs.yml, gemfiles/, README.md"
+  desc 'freshen', 'update files that depend on schema_dev.yml: .github/worksflows/prs.yml, gemfiles/, README.md'
   def freshen
-      runner.freshen
+    runner.freshen
   end
 
-  desc "matrix", "run a command over the matrix"
+  desc 'matrix', 'run a command over the matrix'
   matrix_options
   def matrix(*args)
     runner.run(args, **options.to_h.symbolize_keys)
   end
 
-  desc "bundle", "shorthand for '#{$cmd} matrix bundle ...'"
+  desc 'bundle', "shorthand for '#{cmd} matrix bundle ...'"
   matrix_options
   def bundle(*args)
     runner.run('bundle', args, **options.to_h.symbolize_keys)
   end
 
-  desc "rake", "shorthand for '#{$cmd} matrix bundle exec rake ...'"
+  desc 'rake', "shorthand for '#{cmd} matrix bundle exec rake ...'"
   matrix_options
   def rake(*args)
     runner.run('bundle', 'exec', 'rake', args, **options.to_h.symbolize_keys)
   end
 
-  desc "rspec", "shorthand for '#{$cmd} bundle exec rspec ...'"
+  desc 'rspec', "shorthand for '#{cmd} bundle exec rspec ...'"
   matrix_options
   def rspec(*args)
     runner.run('bundle', 'exec', 'rspec', args, **options.to_h.symbolize_keys)
   end
 
-  desc "gem", "create a new SchemaPlus gem"
+  desc 'gem', 'create a new SchemaPlus gem'
   def gem(name)
-      SchemaDev::Gem.build(name)
+    SchemaDev::Gem.build(name)
   end
-
 end
 
-case
-when ARGV[0] == "--version" then puts "SchemaDev #{SchemaDev::VERSION}"
-else CLI.start(ARGV)
+case ARGV[0]
+when '--version'
+  puts "SchemaDev #{SchemaDev::VERSION}"
+else
+  CLI.start(ARGV)
 end

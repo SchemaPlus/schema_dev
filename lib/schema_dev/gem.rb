@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 require 'json'
 require 'fileutils'
@@ -15,7 +17,7 @@ module SchemaDev
 
     attr_accessor :gem_name, :gem_module, :gem_root, :gem_parent_name, :gem_base_name, :gem_lib_path, :fullname, :email
 
-    class TemplateEnv 
+    class TemplateEnv
       extend Forwardable
 
       def_delegators :@gem, :gem_name, :gem_module, :gem_root, :gem_parent_name, :gem_base_name, :gem_lib_path, :fullname, :email
@@ -33,29 +35,28 @@ module SchemaDev
       end
 
       def year
-        Time.now.strftime("%Y")
+        Time.now.strftime('%Y')
       end
 
       def get_binding
         binding
       end
-      
+
       def self.schema_plus_core_version
-        @core_version ||= begin
-                            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_plus_core.json').body
-                            gems.reject { |e| e["prerelease"] }
-                                .sort_by { |e| e["number"].split('.') }
-                                .last["number"]
-                          end
+        @schema_plus_core_version ||=
+          begin
+            gems = JSON.parse Faraday.get('https://rubygems.org/api/v1/versions/schema_plus_core.json').body
+            last = gems.reject { |e| e['prerelease'] }.max_by { |e| e['number'].split('.') }
+            last['number']
+          end
       end
 
-      def _dependency(v)
-        major, minor, patch = v.split('.')
-        dep = %Q{"~> #{major}.#{minor}"}
-        dep += %Q{, ">= #{v}"} if patch != "0"
+      def _dependency(version)
+        major, minor, patch = version.split('.')
+        dep = %('~> #{major}.#{minor}')
+        dep += %(, '>= #{version}') if patch != '0'
         dep
       end
-        
     end
 
     def initialize(name)
@@ -81,20 +82,20 @@ module SchemaDev
       ensure_not_in_git
       ensure_doesnt_exist
       copy_template
-      self.gem_root = self.gem_root.realpath
+      self.gem_root = gem_root.realpath
       rename_files
       fixup_subdir if @subdir
       freshen
       git_init
-      puts <<-END.strip_heredoc
+      puts <<~TEXT
 
-         Created #{gem_name}.  Your recommended next steps are:
+        Created #{gem_name}.  Your recommended next steps are:
 
-                $ cd #{gem_name}
-                $ bundle install
-                $ schema_dev bundle install
-                $ schema_dev rspec
-      END
+               $ cd #{gem_name}
+               $ bundle install
+               $ schema_dev bundle install
+               $ schema_dev rspec
+      TEXT
     end
 
     def die(msg)
@@ -102,8 +103,8 @@ module SchemaDev
     end
 
     def ensure_not_in_git
-      if system("git rev-parse >& /dev/null")
-        die "Cannot create new gem inside existing git worktree; please cd elsewhere"
+      if system('git rev-parse >& /dev/null')
+        die 'Cannot create new gem inside existing git worktree; please cd elsewhere'
       end
     end
 
@@ -114,43 +115,43 @@ module SchemaDev
     end
 
     def get_fullname_and_email
-      {'fullname' => 'name', 'email' => 'email' }.each do |myattr, gitattr|
-        if (self.send myattr+"=", `git config user.#{gitattr}`.strip).blank?
+      { 'fullname' => 'name', 'email' => 'email' }.each do |myattr, gitattr|
+        if (send myattr + '=', `git config user.#{gitattr}`.strip).blank?
           die "Who are you?  Please run 'git config --global user.#{gitattr} <your-#{gitattr}>'"
         end
       end
     end
 
     def copy_template
-      Templates.install_subtree src: "gem", dst: gem_root, bound: template_binding
+      Templates.install_subtree src: 'gem', dst: gem_root, bound: template_binding
     end
 
     def rename_files
-      (gem_root + "gitignore").rename gem_root + ".gitignore"
-      (gem_root + "simplecov").rename gem_root + ".simplecov"
-      Dir.glob(gem_root + "**/*GEM_NAME*").each do |path|
+      (gem_root + 'gitignore').rename gem_root + '.gitignore'
+      (gem_root + 'simplecov').rename gem_root + '.simplecov'
+      Dir.glob(gem_root + '**/*GEM_NAME*').each do |path|
         FileUtils.mv path, path.gsub(/GEM_NAME/, gem_name)
       end
-      Dir.glob(gem_root + "**/*GEM_BASE_NAME*").each do |path|
+      Dir.glob(gem_root + '**/*GEM_BASE_NAME*').each do |path|
         FileUtils.mv path, path.gsub(/GEM_BASE_NAME/, gem_base_name)
       end
     end
 
     def fixup_subdir
-      libdir = gem_root + "lib"
-      aside = libdir.to_s + "x"
+      libdir = gem_root + 'lib'
+      aside = libdir.to_s + 'x'
       subdir = libdir + gem_parent_name
 
       FileUtils.mv libdir, aside
       libdir.mkpath
       FileUtils.mv aside, subdir
-      (gem_root + "lib" + "#{gem_name}.rb").write <<-END.lstrip
+      (gem_root + 'lib' + "#{gem_name}.rb").write <<~RUBY
         require_relative '#{gem_parent_name}/#{gem_base_name}'
-      END
+      RUBY
     end
 
-    def erb(s)
-      ERB.new(s).result template_binding
+    def erb(string)
+      ERB.new(string).result template_binding
     end
 
     def template_binding
@@ -159,13 +160,13 @@ module SchemaDev
 
     def freshen
       Dir.chdir gem_root do
-        Runner.new(Config.read).freshen(quiet:true)
+        Runner.new(Config.read).freshen(quiet: true)
       end
     end
 
     def git_init
       Dir.chdir gem_name do
-        system "git init"
+        system 'git init'
         add_param = gem_root.find
                             .select(&:exist?)
                             .reject { |e| e.basename.to_s == 'Gemfile.local' }
