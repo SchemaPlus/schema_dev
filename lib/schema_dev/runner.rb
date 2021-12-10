@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'shellwords'
 
 require_relative 'matrix_executor'
@@ -7,6 +9,8 @@ require_relative 'readme'
 
 module SchemaDev
   class Runner
+    attr_reader :config
+
     def initialize(config)
       @config = config
     end
@@ -19,20 +23,20 @@ module SchemaDev
 
     def gemfiles(quiet: false)
       if Gemfiles.build(@config)
-        puts "* Updated gemfiles" unless quiet
+        puts '* Updated gemfiles' unless quiet
       end
     end
 
     def readme(quiet: false)
       if Readme.update(@config)
-        puts "* Updated README" unless quiet
+        puts '* Updated README' unless quiet
       end
     end
 
     def freshen(quiet: false)
-      self.github_actions(quiet: quiet)
-      self.gemfiles(quiet: quiet)
-      self.readme(quiet: quiet)
+      github_actions(quiet: quiet)
+      gemfiles(quiet: quiet)
+      readme(quiet: quiet)
     end
 
     def run(*args, dry_run: false, quick: false, ruby: nil, activerecord: nil, db: nil, freshen: true)
@@ -43,7 +47,7 @@ module SchemaDev
       return true if matrix.run(Shellwords.join(args.flatten), dry_run: dry_run)
 
       puts "\n*** #{matrix.errors.size} failures:\n\t#{matrix.errors.join("\n\t")}"
-      return false
+      false
     end
   end
 end

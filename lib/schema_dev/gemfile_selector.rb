@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'pathname'
 
 module SchemaDev
-  GEMFILES_DIR = "gemfiles"
+  GEMFILES_DIR = 'gemfiles'
 
   module GemfileSelector
     extend self

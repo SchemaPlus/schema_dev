@@ -1,22 +1,25 @@
+# frozen_string_literal: true
+
 require 'schema_dev/github_actions'
 
 describe SchemaDev::GithubActions do
-  let(:config_options) { {} }
-  let(:config) { get_config(config_options) }
-
   subject do
     in_tmpdir do
-      described_class.update(config)
+      described_class.update(get_config(config))
       Pathname.new(described_class::WORKFLOW_FILE).read
     end
   end
 
+  let(:config) { {} }
+
   context 'when only having sqlite3 enabled' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2, 6.0],
-      db:           %w[sqlite3],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2, 6.0],
+        db: %w[sqlite3]
+      }
+    end
 
     it 'creates a workflow file containing setup for just sqlite3' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -78,11 +81,13 @@ describe SchemaDev::GithubActions do
   end
 
   context 'when ruby 3 is included with AR < 6.0' do
-    let(:config_options) { {
-      ruby:         [2.5, 3.0],
-      activerecord: [5.2, 6.0],
-      db:           %w[sqlite3],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5, 3.0],
+        activerecord: [5.2, 6.0],
+        db: %w[sqlite3]
+      }
+    end
 
     it 'automatically excludes old AR on ruby 3' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -148,12 +153,18 @@ describe SchemaDev::GithubActions do
   end
 
   context 'when notify is passed' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2],
-      db:           %w[sqlite3],
-      notify:       'me@example.com',
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2],
+        db: %w[sqlite3],
+        notify: 'me@example.com'
+      }
+    end
+
+    around do |ex|
+      suppress_stdout_stderr(&ex)
+    end
 
     it 'outputs a warning' do
       expect { subject }.to output(/Notify is no longer supported/).to_stderr
@@ -218,11 +229,13 @@ describe SchemaDev::GithubActions do
   end
 
   context 'when only having postgresql enabled' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2, 6.0],
-      db:           %w[postgresql],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2, 6.0],
+        db: %w[postgresql]
+      }
+    end
 
     it 'creates a workflow file containing setup for just postgresql' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -326,15 +339,16 @@ describe SchemaDev::GithubActions do
                 parallel-finished: true
       YAML
     end
-
   end
 
   context 'when only having mysql2 enabled' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2, 6.0],
-      db:           %w[mysql2],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2, 6.0],
+        db: %w[mysql2]
+      }
+    end
 
     it 'creates a workflow file containing setup for just mysql2' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -426,12 +440,14 @@ describe SchemaDev::GithubActions do
   end
 
   context 'when only having postgresql with multiple DB versions' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2, 6.0],
-      db:           %w[postgresql],
-      dbversions:   { postgresql: [9.6, 10] }
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2, 6.0],
+        db: %w[postgresql],
+        dbversions: { postgresql: [9.6, 10] }
+      }
+    end
 
     it 'creates a workflow file containing setup for just postgresql' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -543,17 +559,18 @@ describe SchemaDev::GithubActions do
                 parallel-finished: true
       YAML
     end
-
   end
 
   context 'when only having postgresql with multiple DB versions with excludes' do
-    let(:config_options) { {
-      ruby:         [2.5],
-      activerecord: [5.2, 6.0],
-      db:           %w[postgresql],
-      dbversions:   { postgresql: [9.6, 10] },
-      exclude:      [{ db: 'postgresql', dbversion: 9.6, activerecord: 5.2 }],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5],
+        activerecord: [5.2, 6.0],
+        db: %w[postgresql],
+        dbversions: { postgresql: [9.6, 10] },
+        exclude: [{ db: 'postgresql', dbversion: 9.6, activerecord: 5.2 }]
+      }
+    end
 
     it 'creates a workflow file containing setup for just postgresql' do
       is_expected.to eq described_class::HEADER + <<~YAML
@@ -661,15 +678,16 @@ describe SchemaDev::GithubActions do
                 parallel-finished: true
       YAML
     end
-
   end
 
   context 'when configured multiple DBs' do
-    let(:config_options) { {
-      ruby:         [2.5, 3.0],
-      activerecord: [5.2, 6.0],
-      db:           %w[sqlite3 mysql2 postgresql],
-    } }
+    let(:config) do
+      {
+        ruby: [2.5, 3.0],
+        activerecord: [5.2, 6.0],
+        db: %w[sqlite3 mysql2 postgresql]
+      }
+    end
 
     it 'creates a workflow file containing the complex setup' do
       is_expected.to eq described_class::HEADER + <<~YAML

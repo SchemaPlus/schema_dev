@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'logger'
 require 'pathname'
 require_relative '../gemfile_selector'
@@ -12,25 +14,25 @@ module SchemaDev
         connect
         RSpec.configure do |config|
           config.include Helpers
-          config.filter_run_excluding :postgresql => :only unless Helpers.postgresql?
-          config.filter_run_excluding :postgresql => :skip if     Helpers.postgresql?
-          config.filter_run_excluding :mysql      => :only unless Helpers.mysql?
-          config.filter_run_excluding :mysql      => :skip if     Helpers.mysql?
-          config.filter_run_excluding :sqlite3    => :only unless Helpers.sqlite3?
-          config.filter_run_excluding :sqlite3    => :skip if     Helpers.sqlite3?
+          config.filter_run_excluding postgresql: :only unless Helpers.postgresql?
+          config.filter_run_excluding postgresql: :skip if Helpers.postgresql?
+          config.filter_run_excluding mysql: :only unless Helpers.mysql?
+          config.filter_run_excluding mysql: :skip if Helpers.mysql?
+          config.filter_run_excluding sqlite3: :only unless Helpers.sqlite3?
+          config.filter_run_excluding sqlite3: :skip if Helpers.sqlite3?
         end
       end
 
       def tmproot
-        @tmproot ||= Pathname.new('tmp').tap { |path| path.mkpath }
+        @tmproot ||= Pathname.new('tmp').tap(&:mkpath)
       end
 
       def logroot
-        @logroot ||= Pathname.new('log').tap { |path| path.mkpath }
+        @logroot ||= Pathname.new('log').tap(&:mkpath)
       end
 
       def database
-        @database ||= "schema_plus_test"
+        @database ||= 'schema_plus_test'
         # @database ||= (Dir["*.gemspec"].first || "schema_dev_test").sub(/\.gemspec$/, '') + "_test"
       end
 
@@ -38,37 +40,37 @@ module SchemaDev
         case db || infer_db
         when 'mysql'
           {
-            "adapter"      => 'mysql',
-            "database"     => database,
-            "host"         => ENV['MYSQL_DB_HOST'],
-            "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
-            "password"     => ENV['MYSQL_DB_PASS'],
-            "encoding"     => 'utf8',
-            "min_messages" => 'warning'
+            'adapter'      => 'mysql',
+            'database'     => database,
+            'host'         => ENV['MYSQL_DB_HOST'],
+            'username'     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            'password'     => ENV['MYSQL_DB_PASS'],
+            'encoding'     => 'utf8',
+            'min_messages' => 'warning'
           }
         when 'mysql2'
           {
-            "adapter"      => 'mysql2',
-            "database"     => database,
-            "host"         => ENV['MYSQL_DB_HOST'],
-            "username"     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
-            "password"     => ENV['MYSQL_DB_PASS'],
-            "encoding"     => 'utf8',
-            "min_messages" => 'warning'
+            'adapter'      => 'mysql2',
+            'database'     => database,
+            'host'         => ENV['MYSQL_DB_HOST'],
+            'username'     => ENV.fetch('MYSQL_DB_USER', 'schema_plus'),
+            'password'     => ENV['MYSQL_DB_PASS'],
+            'encoding'     => 'utf8',
+            'min_messages' => 'warning'
           }
         when 'postgresql'
           {
-            "adapter"      => 'postgresql',
-            "database"     => database,
-            "host"         => ENV['POSTGRESQL_DB_HOST'],
-            "username"     => ENV['POSTGRESQL_DB_USER'],
-            "password"     => ENV['POSTGRESQL_DB_PASS'],
-            "min_messages" => 'warning'
+            'adapter'      => 'postgresql',
+            'database'     => database,
+            'host'         => ENV['POSTGRESQL_DB_HOST'],
+            'username'     => ENV['POSTGRESQL_DB_USER'],
+            'password'     => ENV['POSTGRESQL_DB_PASS'],
+            'min_messages' => 'warning'
           }
         when 'sqlite3'
           {
-            "adapter"  => 'sqlite3',
-            "database" => tmproot.join("#{database}.sqlite3").to_s
+            'adapter'  => 'sqlite3',
+            'database' => tmproot.join("#{database}.sqlite3").to_s
           }
         else
           raise "Unknown db adapter #{db.inspect}"
@@ -84,14 +86,14 @@ module SchemaDev
         ActiveRecord::Base.establish_connection :schema_dev
         case infer_db
         when 'sqlite3'
-          ActiveRecord::Base.connection.execute "PRAGMA synchronous = OFF"
+          ActiveRecord::Base.connection.execute 'PRAGMA synchronous = OFF'
         end
       end
 
       def set_logger
         ruby = "#{RUBY_ENGINE}#{RUBY_VERSION}"
         activerecord = "activerecord#{ActiveRecord.version}"
-        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}-#{activerecord}-#{infer_db}.log").open("w"))
+        ActiveRecord::Base.logger = Logger.new(logroot.join("#{ruby}-#{activerecord}-#{infer_db}.log").open('w'))
       end
 
       module Helpers

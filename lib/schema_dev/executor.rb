@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'open3'
 
-require_relative "ruby_selector"
-require_relative "gemfile_selector"
+require_relative 'ruby_selector'
+require_relative 'gemfile_selector'
 
 module SchemaDev
   class Executor
-
     attr_reader :ruby, :activerecord, :db, :error
 
     def initialize(ruby:, activerecord:, db:)
@@ -15,20 +16,20 @@ module SchemaDev
     end
 
     def run(cmd, dry_run: false)
-      fullcommand = ["/usr/bin/env", @gemfile_selector, @ruby_selector, cmd].compact.join(' ')
+      fullcommand = ['/usr/bin/env', @gemfile_selector, @ruby_selector, cmd].compact.join(' ')
       puts "* #{fullcommand}"
       return true if dry_run
 
       @error = false
-      Open3.popen2e(fullcommand) do |i, oe, t|
-        oe.each {|line|
+      Open3.popen2e(fullcommand) do |_i, oe, t|
+        oe.each do |line|
           puts line
           @error ||= (line =~ /(^Failed examples)|(rake aborted)|(LoadError)/)
-        }
+        end
         @error ||= !t.value.success?
       end
 
-      return !@error
+      !@error
     end
   end
 end

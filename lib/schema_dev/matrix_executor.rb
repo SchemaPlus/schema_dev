@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'executor'
 
 module SchemaDev
@@ -16,14 +18,14 @@ module SchemaDev
         db = tuple[:db]
 
         label = "ruby #{ruby} - activerecord #{activerecord} - db #{db}"
-        msg = "#{label} [#{i+1} of #{@matrix.size}]"
+        msg = "#{label} [#{i + 1} of #{@matrix.size}]"
         puts "\n\n*** #{msg}\n\n"
 
         if not Executor.new(ruby: ruby, activerecord: activerecord, db: db).run(cmd, dry_run: dry_run)
           @errors << label
         end
       end
-      return @errors.empty?
+      @errors.empty?
     end
   end
 end
