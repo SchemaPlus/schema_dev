@@ -27,7 +27,7 @@ module SchemaDev
         pull_request: nil,
       },
       concurrency: {
-        group:                '${{ github.head_ref }}',
+        group:                'ci-${{ github.ref }}',
         'cancel-in-progress': true,
       }
     }.freeze

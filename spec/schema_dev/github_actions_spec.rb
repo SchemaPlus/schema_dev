@@ -31,7 +31,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -99,7 +99,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -180,7 +180,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -247,7 +247,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -360,7 +360,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -459,7 +459,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -582,7 +582,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
@@ -699,7 +699,7 @@ describe SchemaDev::GithubActions do
             - master
           pull_request:
         concurrency:
-          group: "${{ github.head_ref }}"
+          group: ci-${{ github.ref }}
           cancel-in-progress: true
         jobs:
           test:
