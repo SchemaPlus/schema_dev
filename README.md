@@ -136,6 +136,7 @@ Which defines the rake task `create_databases` and also a task for github action
 
 Release notes for schema_dev versions:
 
+* **4.1.0** - Switch to GitHub actions instead of travis CI
 * **4.0.0** - Drop support for AR < 5.2 and add AR 6.0 and 6.1
 * **3.13.1** - Adjust travis.yml generation to work with mysql again
 * **3.13.0** - Change coveralls gem and test against newer ruby versions
