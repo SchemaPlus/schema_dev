@@ -17,7 +17,11 @@ module SchemaDev
     end
 
     def self.read
-      new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, [Symbol]).symbolize_keys)
+      if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('3.1')
+        new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, permitted_classes: [Symbol], symbolize_names: true))
+      else
+        new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, [Symbol], symbolize_names: true))
+      end
     end
 
     def self.load
