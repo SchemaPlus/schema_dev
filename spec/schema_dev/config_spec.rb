@@ -57,4 +57,17 @@ describe SchemaDev::Config do
       { ruby: '2.1.5', activerecord: '4.1', db: 'postgresql' },
     ]
   end
+
+  it 'excludes variations that are not possible' do
+    config = get_config(ruby: %w[2.6 2.7 3.0], activerecord: %w[5.2 6.0 7.0], db: %w[sqlite3])
+    expect(config.matrix).to contain_exactly(
+      { ruby: '2.6', activerecord: '5.2', db: 'sqlite3' },
+      { ruby: '2.6', activerecord: '6.0', db: 'sqlite3' },
+      { ruby: '2.7', activerecord: '5.2', db: 'sqlite3' },
+      { ruby: '2.7', activerecord: '6.0', db: 'sqlite3' },
+      { ruby: '2.7', activerecord: '7.0', db: 'sqlite3' },
+      { ruby: '3.0', activerecord: '6.0', db: 'sqlite3' },
+      { ruby: '3.0', activerecord: '7.0', db: 'sqlite3' },
+    )
+  end
 end

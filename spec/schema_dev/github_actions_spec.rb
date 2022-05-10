@@ -152,6 +152,78 @@ describe SchemaDev::GithubActions do
     end
   end
 
+  context 'when AR 7.0 is included with Ruby < 2.7' do
+    let(:config) do
+      {
+        ruby: [2.5, 2.7],
+        activerecord: [6.0, 7.0],
+        db: %w[sqlite3]
+      }
+    end
+
+    it 'automatically excludes Ruby < 2.7 for AR 7.0' do
+      is_expected.to eq described_class::HEADER + <<~YAML
+        ---
+        name: CI PR Builds
+        'on':
+          push:
+            branches:
+            - master
+          pull_request:
+        concurrency:
+          group: ci-${{ github.ref }}
+          cancel-in-progress: true
+        jobs:
+          test:
+            runs-on: ubuntu-latest
+            strategy:
+              fail-fast: false
+              matrix:
+                ruby:
+                - '2.5'
+                - '2.7'
+                activerecord:
+                - '6.0'
+                - '7.0'
+                db:
+                - sqlite3
+                exclude:
+                - ruby: '2.5'
+                  activerecord: '7.0'
+            env:
+              BUNDLE_GEMFILE: "${{ github.workspace }}/gemfiles/activerecord-${{ matrix.activerecord }}/Gemfile.${{ matrix.db }}"
+            steps:
+            - uses: actions/checkout@v2
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@v1
+              with:
+                ruby-version: "${{ matrix.ruby }}"
+                bundler-cache: true
+            - name: Run bundle update
+              run: bundle update
+            - name: Run tests
+              run: bundle exec rake spec
+            - name: Coveralls Parallel
+              if: "${{ !env.ACT }}"
+              uses: coverallsapp/github-action@master
+              with:
+                github-token: "${{ secrets.GITHUB_TOKEN }}"
+                flag-name: run-${{ matrix.ruby }}-${{ matrix.activerecord }}-${{ matrix.db }}-${{ matrix.dbversion }}
+                parallel: true
+          finish:
+            needs: test
+            runs-on: ubuntu-latest
+            steps:
+            - name: Coveralls Finished
+              if: "${{ !env.ACT }}"
+              uses: coverallsapp/github-action@master
+              with:
+                github-token: "${{ secrets.GITHUB_TOKEN }}"
+                parallel-finished: true
+      YAML
+    end
+  end
+
   context 'when notify is passed' do
     let(:config) do
       {
