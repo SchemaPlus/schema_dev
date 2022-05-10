@@ -21,7 +21,7 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 2.5.0'
 
-  gem.add_dependency 'activesupport', '>= 5.2', '< 6.2'
+  gem.add_dependency 'activesupport', '>= 5.2', '< 7.1'
   gem.add_dependency 'faraday', '~> 1.0'
   gem.add_dependency 'simplecov'
   gem.add_dependency 'simplecov-lcov', '~> 0.8.0'

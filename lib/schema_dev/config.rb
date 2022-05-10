@@ -17,7 +17,11 @@ module SchemaDev
     end
 
     def self.read
-      new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, [Symbol]).symbolize_keys)
+      if ::Gem::Version.new(RUBY_VERSION) >= ::Gem::Version.new('3.1')
+        new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, permitted_classes: [Symbol], symbolize_names: true))
+      else
+        new(**YAML.safe_load(Pathname.new(CONFIG_FILE).read, [Symbol], symbolize_names: true))
+      end
     end
 
     def self.load
@@ -30,11 +34,21 @@ module SchemaDev
       @db = Array.wrap(db)
       @dbversions = (dbversions || {}).symbolize_keys
       @exclude = Array.wrap(exclude).map(&:symbolize_keys).map { |tuple| Tuple.new(**tuple.transform_values(&:to_s)) }
-      if @activerecord.include?('5.2')
-        ruby3 = ::Gem::Version.new('3.0')
+      @activerecord.each do |ar_version|
+        ar_check = Gem::Version.new(ar_version)
 
-        @ruby.select { |e| ::Gem::Version.new(e) >= ruby3 }.each do |v|
-          @exclude << Tuple.new(ruby: v, activerecord: '5.2')
+        if ar_check < Gem::Version.new('6.0')
+          ruby3 = ::Gem::Version.new('3.0')
+
+          @ruby.select { |e| ::Gem::Version.new(e) >= ruby3 }.each do |v|
+            @exclude << Tuple.new(ruby: v, activerecord: ar_version)
+          end
+        elsif ar_check >= Gem::Version.new('7.0')
+          ruby27 = ::Gem::Version.new('2.7')
+
+          @ruby.select { |e| ::Gem::Version.new(e) < ruby27 }.each do |v|
+            @exclude << Tuple.new(ruby: v, activerecord: ar_version)
+          end
         end
       end
       unless notify.nil?
