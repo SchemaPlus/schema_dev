@@ -14,12 +14,30 @@ module SchemaDev
         connect
         RSpec.configure do |config|
           config.include Helpers
-          config.filter_run_excluding postgresql: :only unless Helpers.postgresql?
-          config.filter_run_excluding postgresql: :skip if Helpers.postgresql?
+          config.filter_run_excluding postgresql: -> (v) {
+            if Helpers.postgresql?
+              case v
+              when String
+                version = ActiveRecord::Base.connection.select_value("SHOW server_version").match(/(\d+\.\d+)/)[1]
+                postgresql_version = Gem::Version.new(version)
+                test = Gem::Requirement.new(v)
+                !test.satisfied_by?(postgresql_version)
+              else
+                v == :skip
+              end
+            else
+              v == :only
+            end
+          }
           config.filter_run_excluding mysql: :only unless Helpers.mysql?
           config.filter_run_excluding mysql: :skip if Helpers.mysql?
           config.filter_run_excluding sqlite3: :only unless Helpers.sqlite3?
           config.filter_run_excluding sqlite3: :skip if Helpers.sqlite3?
+          config.filter_run_excluding rails: -> (v) {
+            rails_version = Gem::Version.new(ActiveRecord::VERSION::STRING)
+            test = Gem::Requirement.new(v)
+            !test.satisfied_by?(rails_version)
+          }
         end
       end
 
