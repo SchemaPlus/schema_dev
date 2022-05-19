@@ -136,6 +136,7 @@ Which defines the rake task `create_databases` and also a task for github action
 
 Release notes for schema_dev versions:
 
+* **4.2.0** - Add AR 7.0, and Ruby 3.1 support. Also add more shared rspec filters
 * **4.1.1** - Fix github actions generated files for concurrency detection
 * **4.1.0** - Switch to GitHub actions instead of travis CI
 * **4.0.0** - Drop support for AR < 5.2 and add AR 6.0 and 6.1
