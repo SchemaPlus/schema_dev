@@ -11,14 +11,14 @@ if dbms.any?
       task :create_database do
         require 'active_record'
 
-        config = SchemaDev::Rspec.db_configuration(dbm)
+        config = SchemaDev::Rspec.db_configuration(db: dbm)
 
         ActiveRecord::Tasks::DatabaseTasks.create(config)
       end
       task :drop_databases do
         require 'active_record'
 
-        config = SchemaDev::Rspec.db_configuration(dbm)
+        config = SchemaDev::Rspec.db_configuration(db: dbm)
 
         ActiveRecord::Tasks::DatabaseTasks.drop(config)
       end
