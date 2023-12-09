@@ -58,7 +58,7 @@ module SchemaDev
       replace_block(lines, %r{^\s*<!-- SCHEMA_DEV: TEMPLATE #{key}}) do |contents|
         contents << "<!-- SCHEMA_DEV: TEMPLATE #{key} - begin -->\n"
         contents << "<!-- These lines are auto-inserted from a schema_dev template -->\n"
-        contents << template.readlines
+        contents.concat template.readlines
         contents << "\n"
         contents << "<!-- SCHEMA_DEV: TEMPLATE #{key} - end -->\n"
       end
